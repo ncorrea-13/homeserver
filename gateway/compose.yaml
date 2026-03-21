@@ -1,0 +1,56 @@
+services:
+  pihole:
+    container_name: pihole
+    image: docker.io/pihole/pihole:latest
+    network_mode: host
+    environment:
+      TZ: ${TIMEZONE}
+      FTLCONF_webserver_port: 8080
+      FTLCONF_webserver_trusted_hosts: ${PIHOLE_TRUSTED_HOSTS}
+      DNSMASQ_LISTENING: 'all'
+    secrets:
+      - pi_password
+    volumes:
+      - ./pihole/etc-pihole:/etc/pihole:Z
+      - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d:Z
+    cap_add:
+      - NET_ADMIN
+    restart: always
+    tmpfs:
+      - /tmp:size=64M
+      - /run:size=16M
+      - /var/log/pihole:size=64M
+      - /var/log/lighttpd:size=16M
+    logging:
+      driver: journald
+
+  vaultwarden:
+    image: docker.io/vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    environment:
+      - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN}
+      - SIGNUPS_ALLOWED=false # Recomendado false para repo público
+      - TZ=${TIMEZONE}
+    volumes:
+      - ./vaultwarden:/data:Z
+    ports:
+      - "8081:80"
+    tmpfs:
+      - /tmp:size=64M
+    logging:
+      driver: journald
+
+  unbound:
+    container_name: unbound
+    image: localhost/mi-unbound:latest
+    network_mode: host
+    restart: always
+    volumes:
+      - ./unbound-build/unbound.conf:/etc/unbound/unbound.conf:Z
+    logging:
+      driver: journald
+
+secrets:
+  pi_password:
+    external: true
