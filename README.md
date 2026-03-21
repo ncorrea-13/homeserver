@@ -1,4 +1,4 @@
-# Infraestructura Modular Home Server en Raspberry Pi 4
+# My personal homeserver
 
 Este proyecto describe una arquitectura de home server robusta, modular y segura, diseñada para Raspberry Pi 4. Convierte tu Pi en el núcleo de servicios domésticos esenciales aprovechando contenedores y herramientas punteras como Tailscale, OpenMediaVault y Homepage, con soporte técnico avanzado usando Cocktail.
 
@@ -15,7 +15,6 @@ Este proyecto describe una arquitectura de home server robusta, modular y segura
 - [Integración con herramientas clave](#integración-con-herramientas-clave)
   - [Tailscale](#tailscale-seguridad-remota)
   - [OpenMediaVault](#openmediavault-almacenamiento)
-  - [Homepage](#homepage-dashboard-central)
   - [Cocktail](#cocktail-gestion-tecnica-avanzada)
 - [Automatización y Respaldo](#automatización-y-respaldo)
 - [Configuración mediante Variables de Entorno](#configuración-mediante-variables-de-entorno)
@@ -28,7 +27,7 @@ Este proyecto describe una arquitectura de home server robusta, modular y segura
 
 ## Visión General
 
-Esta solución consolida en una sola plataforma los servicios clave para una red doméstica moderna: bloqueo de publicidad, gestión de contraseñas, almacenamiento multimedia, backups y sincronización de archivos. El diseño prioriza seguridad, resiliencia y facilidad de gestión, utilizando tecnologías open source consolidadas.
+Esta solución consolida en una sola plataforma los servicios clave para una red doméstica moderna: bloqueo de publicidad, gestión de contraseñas, almacenamiento multimedia, backups y sincronización de archivos.
 
 ### Diagrama de alto nivel
 
@@ -113,10 +112,6 @@ Más información en la [documentación oficial](https://tailscale.com/kb/).
 
 Gestiona discos, raids, cuotas y comparticiones (NFS/SMB) mediante una interfaz web intuitiva (dashboard de almacenamiento principal). Esencial para estructurar el almacenamiento consumido por los contenedores.
 
-### Homepage (dashboard central)
-
-Dashboard web principal para monitorizar el estado global, acceder a servicios y enlaces rápidos de tu home server.
-
 ### Cocktail (gestión técnica avanzada)
 
 Herramienta opcional ideal para visualizar, monitorear y gestionar contenedores y pods a bajo nivel. Útil para debugging, reinicio manual o ajustes avanzados de los stacks.
@@ -194,7 +189,3 @@ La estructura de stacks independientes permite adicionar servicios, testear upgr
 - [Uptime Kuma](https://github.com/louislam/uptime-kuma)
 - [Pi-hole](https://docs.pi-hole.net/)
 - [Homepage](https://gethomepage.dev)
-
----
-
-Proyecto diseñado para usuarios avanzados y entusiastas del autohosting: seguro, resiliente y flexible. Para consultas, mejoras o contribuciones, usá las issues o mandá PR.
