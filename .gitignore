@@ -1,0 +1,13 @@
+*.db
+*.sqlite3
+*.log
+
+**/vaultwarden/
+**/pihole/etc-pihole/
+**/uptime-kuma-data/
+**/syncthing/config/
+**/filebrowser/filebrowser.db
+**/immich_db/
+**/immich_data/
+
+.env
