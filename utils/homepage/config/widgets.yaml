@@ -1,0 +1,26 @@
+---
+- resources:
+    cpu: true
+    memory: true
+    disk: /
+
+- openweathermap:
+    label: Mendoza, AR
+    latitude: -32.8895
+    longitude: -68.8458
+    units: metric
+    provider: openweathermap
+    apiKey: {{HOMEPAGE_VAR_OPENWEATHER_KEY}} 
+    cache: 5
+
+- datetime:
+    format:
+      date: long
+      time: short
+
+- greeting:
+    text: "Bienvenido, Administrador"
+
+- search:
+    provider: duckduckgo
+    target: _blank

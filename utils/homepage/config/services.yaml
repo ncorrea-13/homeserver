@@ -1,0 +1,33 @@
+- Infraestructura:
+    - Cockpit:
+        icon: si-cockpit
+        href: https://{{HOMEPAGE_VAR_TS_DOMAIN}:9090
+
+    - Open Media Vault:
+        icon: openmediavault.png
+        href: https://{{HOMEPAGE_VAR_TS_DOMAIN}:444
+
+    - Pi-hole:
+        icon: pi-hole.png
+        href: https://{{HOMEPAGE_VAR_TS_DOMAIN}:8443/admin/login
+
+    - Uptime Kuma:
+        icon: uptime-kuma.png
+        href: https://{{HOMEPAGE_VAR_TS_DOMAIN}:3001
+
+- Almacenamiento y Seguridad:
+    - File Browser Quantum:
+        icon: filebrowser-quantum.png
+        href: https://{{HOMEPAGE_VAR_TS_DOMAIN}:3670
+
+    - Immich:
+        icon: immich.png
+        href: https://{{HOMEPAGE_VAR_TS_DOMAIN}:2283
+
+    - Syncthing:
+        icon: syncthing.png
+        href: https://{{HOMEPAGE_VAR_TS_DOMAIN}}:8384
+
+    - Vaultwarden:
+        icon: vaultwarden.png
+        href: https://{{HOMEPAGE_VAR_TS_DOMAIN}}:8081/#/login
