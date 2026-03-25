@@ -1,191 +1,73 @@
 # My personal homeserver
 
-Este proyecto describe una arquitectura de home server robusta, modular y segura, diseñada para Raspberry Pi 4. Convierte tu Pi en el núcleo de servicios domésticos esenciales aprovechando contenedores y herramientas punteras como Tailscale, OpenMediaVault y Homepage, con soporte técnico avanzado usando Cocktail.
+This repository contains the configuration and architecture of my personal home server, a project built to centralize my digital life. Designed to run on a Raspberry Pi 4, this setup focuses on privacy, modularity, and security, leveraging containerized services and high-performance tools like Tailscale, OpenMediaVault, and Cockpit.
 
----
+## Architecture & Services
 
-## Tabla de Contenidos
+The infrastructure is divided into independent stacks to simplify management and backups:
 
-- [Visión General](#visión-general)
-- [Requisitos de Hardware y Software](#requisitos-de-hardware-y-software)
-- [Arquitectura de Servicios](#arquitectura-de-servicios)
-  - [Gateway](#gateway)
-  - [Utils](#utils)
-  - [Immich](#immich)
-- [Integración con herramientas clave](#integración-con-herramientas-clave)
-  - [Tailscale](#tailscale-seguridad-remota)
-  - [OpenMediaVault](#openmediavault-almacenamiento)
-  - [Cocktail](#cocktail-gestion-tecnica-avanzada)
-- [Automatización y Respaldo](#automatización-y-respaldo)
-- [Configuración mediante Variables de Entorno](#configuración-mediante-variables-de-entorno)
-- [Puesta en Marcha](#puesta-en-marcha)
-- [Buenas Prácticas y Mantenimiento](#buenas-prácticas-y-mantenimiento)
-- [Extensión y Soporte](#extensión-y-soporte)
-- [Referencias y Recursos](#referencias-y-recursos)
+#### Gateway (Core Networking)
+- Pi-hole: Network-wide ad and tracker blocking.
+- Unbound: Recursive DNS resolver for enhanced privacy.
+- Vaultwarden: Lightweight, self-hosted Bitwarden-compatible password manager.
 
----
+#### Utils (Productivity)
+- Homepage: A sleek, centralized dashboard for all services.
+- Syncthing: Continuous file synchronization across devices.
+- Uptime-Kuma: Self-hosted uptime monitoring.
+- Filebrowser: Web-based file manager with SMB/NFS support.
 
-## Visión General
+#### Immich
+- Immich: High-performance self-hosted photo and video management (Google Photos alternative) with AI-powered recognition.
 
-Esta solución consolida en una sola plataforma los servicios clave para una red doméstica moderna: bloqueo de publicidad, gestión de contraseñas, almacenamiento multimedia, backups y sincronización de archivos.
+## Hardware & Software Stack
+- Hardware: Raspberry Pi 4B (4GB+ RAM recommended).
+- OS: Debian / Raspberry Pi OS Lite.
+- Container Engine: Podman (or Docker) with Compose support.
+- Storage: [OpenMediaVault](https://www.openmediavault.org/) for RAID and share management.
+- VPN: [Tailscale](https://tailscale.com/) for zero-config secure remote access.
+- Admin: [Cockpit](https://cockpit-project.org/) for low-level container and system monitoring.
 
-### Diagrama de alto nivel
+## Quick Start
 
-```
- Internet
-    │
-  Tailscale (VPN)
-    │
-[ Pi-hole | Vaultwarden | Unbound ] ─── stack "gateway"
-[ Immich (fotos + AI) ]              ─── stack "immich"
-[ Syncthing | Filebrowser | ... ]    ─── stack "utils"
-    │
- OpenMediaVault (almacenamiento y dashboard de discos)
-    │
- Homepage (dashboard general)
-    │
-Cocktail (opcional: monitoreo técnico de contenedores)
+1. Clone & Configure:
+```bash
+git clone https://github.com/ncorrea-13/homeserver
+cp .env.example .env
+# Edit .env with your specific paths and credentials
 ```
 
-*Nota: Homepage y OMV son los dashboards principales. Cocktail es opcional y útil para visualizar detalles técnicos de pods/containers.*
+2. Storage: Set up your drives and shared folders in OpenMediaVault.
 
----
-
-## Requisitos de Hardware y Software
-
-- **Raspberry Pi 4** (mínimo 4 GB de RAM recomendado)
-- Almacenamiento externo confiable (SSD/NAS)
-- Sistema base: Debian/Raspberry Pi OS/Armbian
-- [OpenMediaVault](https://www.openmediavault.org/) instalado y operativo
-- Docker o Podman con soporte para Compose
-
----
-
-## Arquitectura de Servicios
-
-El sistema separa funcionalidades en tres grandes pilas para simplificar la administración y los backups:
-
-### Gateway
-
-Servicio crítico de red y seguridad:
-
-- **Pi-hole**: Filtro avanzando de publicidad y rastreadores para toda la LAN
-- **Vaultwarden**: Password manager self-hosted compatible con Bitwarden Apps
-- **Unbound**: DNS recursivo privado para mejorar privacidad y velocidad
-
-### Utils
-
-Herramientas de productividad y monitoreo:
-
-- **Homepage**: Dashboard centralizado para enlaces, estados y accesos rápidos
-- **Syncthing**: Sincronización automática de archivos y dispositivos
-- **Uptime-Kuma**: Monitor de salud y disponibilidad de servicios
-- **Filebrowser**: Gestor de archivos web amigable, con soporte SMB/NFS
-
-### Immich
-
-Solución de fotos y videos autoalojada, tipo Google Photos:
-
-- **Immich**: IA para reconocimiento, gestión multimedia y subida automática
-- **Machine Learning, Redis, Postgres**: Backend optimizado especialmente para Raspberry Pi
-
-Cada stack se despliega de manera aislada mediante archivos `compose.yaml`, facilitando actualización y troubleshooting independiente.
-
----
-
-## Integración con herramientas clave
-
-### Tailscale (seguridad remota)
-
-Despliega una red VPN wireguard con configuración mínima, ideal para acceder a tu servidor de manera segura desde cualquier parte sin exponer puertos.
-
-**Instalación base:**
-
+3. Deploy Stacks:
+```bash
+# Deploying with podman-compose or docker-compose
+podman-compose -f gateway/compose.yaml up -d
+podman-compose -f immich/compose.yaml up -d
+podman-compose -f utils/compose.yaml up -d
 ```
-curl -fsSL https://tailscale.com/install.sh | sh
-sudo tailscale up --authkey tu-key
-```
+4. Access: Open your browser at your Pi's IP to access the Homepage dashboard.
 
-Más información en la [documentación oficial](https://tailscale.com/kb/).
+## Automation & Backup
 
-### OpenMediaVault (almacenamiento y dashboard)
+The included scripts/backup_nas.sh handles data integrity:
 
-Gestiona discos, raids, cuotas y comparticiones (NFS/SMB) mediante una interfaz web intuitiva (dashboard de almacenamiento principal). Esencial para estructurar el almacenamiento consumido por los contenedores.
+- Database Dumps: Atomic backups for Immich (Postgres) and Vaultwarden.
+- Incremental Sync: Uses rsync for critical data folders.
+- Retention: 15-day automatic rotation.
+- Health Checks: Monitors system voltage and backup logs.
+> Tip: Schedule this via cron to ensure your data is always safe.
 
-### Cocktail (gestión técnica avanzada)
+## Best Practices
+- Security: Access services via Tailscale VPN; avoid exposing ports to the public internet.
+- Maintenance: Regularly run podman-compose pull to keep images updated.
+- Environment: Never commit your .env file to version control.
+- Monitoring: Periodically check Pi temperature and disk health via Cockpit.
 
-Herramienta opcional ideal para visualizar, monitorear y gestionar contenedores y pods a bajo nivel. Útil para debugging, reinicio manual o ajustes avanzados de los stacks.
+## Sources
+## Sources
 
----
-
-## Automatización y Respaldo
-
-El script `/scripts/backup_nas.sh` automatiza los backups:
-
-- Dump SQL de Immich y respaldo binario atómico de Vaultwarden
-- Sincronización incremental de carpetas críticas vía `rsync`
-- Rotación automática manteniendo backups por 15 días
-- Logging detallado y chequeo básico de salud (voltaje, integridad)
-
-Se recomienda agendar este script en `cron` o `anacron` según la criticidad de tus datos.
-
----
-
-## Configuración mediante Variables de Entorno
-
-Toda la parametrización (credenciales, rutas, parámetros de red, tokens) se centraliza en `.env`. Renombrá y editá `.env.example` antes de iniciar los servicios.
-
-Aspectos clave:
-
-- Token de admin de Vaultwarden y claves de servicios
-- Rutas de discos, ubicaciones de backups, etc.
-- Hosts confiables y dominio de Tailscale para integración LAN/VPN
-
----
-
-## Puesta en Marcha
-
-1. Cloná el repositorio y copiate `.env.example` a `.env`, completando los valores necesarios para tu entorno
-2. Configurá discos y comparticiones en OpenMediaVault
-3. Deploy de cada stack de servicios (adaptá a tu motor preferido):
-
-   ```bash
-   docker compose -f gateway/compose.yaml up -d
-   docker compose -f immich/compose.yaml up -d
-   docker compose -f utils/compose.yaml up -d
-   # o podman-compose si administrás rootless
-   ```
-
-4. Verificá que los endpoints estén activos y funcionando (Homepage, OMV, Pi-hole, etc.)
-5. Activá Tailscale y accedé de forma remota y segura
-6. Agendá backup automatizado y monitoreá periódicamente
-
----
-
-## Buenas Prácticas y Mantenimiento
-
-- Actualizá imágenes y dependencias periódicamente (`docker compose pull && up -d`)
-- Restringí acceso externo vía VPN y limitá exposición de servicios públicos
-- Guardá las contraseñas y tokens sólo en `.env` (no versionar)
-- Monitoreá activamente logs, recursos y alertas de backup
-- Chequeá temperatura y uso de almacenamiento de tu Pi4 regularmente
-- Revisá integridad de backups y ejecutá restauraciones de validación cada cierto tiempo
-
----
-
-## Extensión y Soporte
-
-La estructura de stacks independientes permite adicionar servicios, testear upgrades o integrar nuevas herramientas sin afectar el resto de la infraestructura. El stack puede ser adaptado a otras plataformas ARM o incluso trasladado a equipos más potentes manteniendo la misma lógica modular.
-
----
-
-## Referencias y Recursos
-
-- [OpenMediaVault](https://www.openmediavault.org/)
-- [Tailscale](https://tailscale.com/kb/)
-- [Cocktail](https://cocktail.tools/docs/)
+- [OpenMediaVault](https://www.openmediavault.org/) | [Tailscale](https://tailscale.com/kb/) | [Cockpit](https://cockpit-project.org/)
+- [Vaultwarden](https://github.com/dani-garcia/vaultwarden) | [Pi-hole](https://docs.pi-hole.net/) | [Unbound](https://nlnetlabs.nl/projects/unbound/about/)
+- [Uptime Kuma](https://github.com/louislam/uptime-kuma) | [Homepage](https://gethomepage.dev) | [Syncthing](https://syncthing.net/) | [Filebrowser](https://filebrowser.org/)
 - [Immich](https://immich.app/docs/)
-- [Vaultwarden](https://github.com/dani-garcia/vaultwarden)
-- [Uptime Kuma](https://github.com/louislam/uptime-kuma)
-- [Pi-hole](https://docs.pi-hole.net/)
-- [Homepage](https://gethomepage.dev)
