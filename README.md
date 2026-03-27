@@ -71,3 +71,9 @@ The included scripts/backup_nas.sh handles data integrity:
 - [Vaultwarden](https://github.com/dani-garcia/vaultwarden) | [Pi-hole](https://docs.pi-hole.net/) | [Unbound](https://nlnetlabs.nl/projects/unbound/about/)
 - [Uptime Kuma](https://github.com/louislam/uptime-kuma) | [Homepage](https://gethomepage.dev) | [Syncthing](https://syncthing.net/) | [Filebrowser](https://filebrowser.org/)
 - [Immich](https://immich.app/docs/)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+*Mendoza, Argentina — Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))*
