@@ -14,28 +14,6 @@ services:
       - HOMEPAGE_VAR_SERVER_HOST_VALIDATION=false
       - HOMEPAGE_ALLOWED_HOSTS=${TS_IP}:3000,${TS_DOMAIN},localhost
 
-  syncthing:
-    image: docker.io/linuxserver/syncthing:latest
-    container_name: syncthing
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TIMEZONE}
-      - STGUIADDRESS=0.0.0.0:8384
-    volumes:
-      - ./syncthing/config:/config:Z
-      - ${OBSIDIAN_PATH}:/var/syncthing:Z
-    ports:
-      - "8384:8384"
-      - "22000:22000/tcp"
-      - "22000:22000/udp"
-    restart: always
-    tmpfs:
-      - /tmp:size=50M
-      - /run:size=50M
-    logging:
-      driver: journald
-
   uptime-kuma:
     image: docker.io/louislam/uptime-kuma:latest
     container_name: uptime-kuma
@@ -47,24 +25,5 @@ services:
       - /run/user/${PUID}/podman/podman.sock:/var/run/docker.sock:ro
     security_opt:
       - label=disable
-    logging:
-      driver: journald
-
-  filebrowser:
-    image: docker.io/filebrowser/filebrowser:latest
-    container_name: filebrowser
-    user: "0:0"
-    privileged: true
-    restart: always
-    security_opt:
-      - label=disable
-    ports:
-      - "3670:80"
-    environment:
-      - TZ=${TIMEZONE}
-    command: ["--database", "/config/filebrowser.db", "--root", "/srv", "--address", "0.0.0.0"]
-    volumes:
-      - ${NAS_ROOT_PATH}:/srv:z
-      - ./filebrowser:/config:z
     logging:
       driver: journald
