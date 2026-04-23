@@ -24,23 +24,6 @@ services:
     logging:
       driver: journald
 
-  vaultwarden:
-    image: docker.io/vaultwarden/server:latest
-    container_name: vaultwarden
-    restart: always
-    environment:
-      - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN}
-      - SIGNUPS_ALLOWED=false # Recomendado false para repo público
-      - TZ=${TIMEZONE}
-    volumes:
-      - ./vaultwarden:/data:Z
-    ports:
-      - "8081:80"
-    tmpfs:
-      - /tmp:size=64M
-    logging:
-      driver: journald
-
   unbound:
     container_name: unbound
     image: localhost/mi-unbound:latest
