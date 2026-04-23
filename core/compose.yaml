@@ -1,0 +1,30 @@
+services:
+  vaultwarden:
+    image: docker.io/vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    environment:
+      - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN}
+      - SIGNUPS_ALLOWED=false # Recomendado false para repo público
+      - TZ=${TIMEZONE}
+    volumes:
+      - ./vaultwarden:/data:Z
+    ports:
+      - "8081:80"
+    tmpfs:
+      - /tmp:size=64M
+    logging:
+      driver: journald
+
+  radicale:
+    image: ghcr.io/kozea/radicale:latest
+    container_name: radicale
+    restart: unless-stopped
+    ports:
+      - "5232:5232"
+    volumes:
+      - ./radicale:/data:Z
+      - ./radicale/config:/etc/radicale/config:Z
+    command: ["--config", "/data/config"]
+    environment:
+      - TZ={TIMEZONE}
