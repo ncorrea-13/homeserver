@@ -51,9 +51,9 @@ cp .env.example .env
 # Edit .env with your specific paths and credentials
 ```
 
-1. Storage: Set up your drives and shared folders in OpenMediaVault.
+2. Storage: Set up your drives and shared folders in OpenMediaVault.
 
-2. Deploy Stacks:
+3. Deploy Stacks:
 
 ```bash
 # Deploying with podman-compose or docker-compose
@@ -62,7 +62,7 @@ podman-compose -f immich/compose.yaml up -d
 podman-compose -f utils/compose.yaml up -d
 ```
 
-1. Access: Open your browser at your Pi's IP to access the Homepage dashboard.
+4. Access: Open your browser at your Pi's IP to access the Homepage dashboard.
 
 ## Automation & Backup
 
