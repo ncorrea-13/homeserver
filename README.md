@@ -13,7 +13,7 @@ The infrastructure is divided into independent stacks to simplify management and
 
 #### Gateway
 
-- Unbound: A DNS resolver that provides additional privacy and performance for your network, running as a local recursive DNS server.
+- Unbound: Recursive DNS resolver configured with DNS over TLS (DoT) via Quad9 for encrypted, private lookups.
 - **Pi-hole**: Network-wide DNS filtering for ads and trackers, directly on your LAN.
 
 #### Storage
@@ -33,7 +33,7 @@ The infrastructure is divided into independent stacks to simplify management and
 
 ## Hardware & Software Stack
 
-- Hardware: Raspberry Pi 4B (4GB+ RAM recommended).
+- Hardware: Raspberry Pi 4B (4GB) housed in an Argon Case V2 for optimized thermal management.
 - OS: Debian / Raspberry Pi OS Lite.
 - Container Engine: Podman (or Docker) with Compose support.
 - Storage: [OpenMediaVault](https://www.openmediavault.org/) for RAID and share management.
