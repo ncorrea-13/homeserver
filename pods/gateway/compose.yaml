@@ -30,7 +30,7 @@ services:
     network_mode: host
     restart: always
     volumes:
-      - ./unbound-build/unbound.conf:/etc/unbound/unbound.conf:Z
+      - ./unbound/unbound.conf:/etc/unbound/unbound.conf:Z
     logging:
       driver: journald
 
