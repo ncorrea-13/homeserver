@@ -1,0 +1,27 @@
+name: miniflux
+
+services:
+  miniflux:
+    image: docker.io/miniflux/miniflux:latest
+    container_name: miniflux
+    ports:
+      - "${MINIFLUX_PORT:-8086}:8080"
+    environment:
+      - DATABASE_URL=postgres://${MINIFLUX_DB_USER}:${MINIFLUX_DB_PASSWORD}@db/${MINIFLUX_DB_NAME}?sslmode=disable
+      - RUN_MIGRATIONS=1
+      - ADMIN_USERNAME=${MINIFLUX_ADMIN_USER}
+      - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASSWORD}
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: docker.io/library/postgres:15-alpine
+    container_name: miniflux_db
+    environment:
+      - POSTGRES_USER=${MINIFLUX_DB_USER}
+      - POSTGRES_PASSWORD=${MINIFLUX_DB_PASSWORD}
+      - POSTGRES_DB=${MINIFLUX_DB_NAME}
+    volumes:
+      - ./db_data:/var/lib/postgresql/data:Z
+    restart: always
