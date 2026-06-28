@@ -1,89 +1,142 @@
-# My personal homeserver
+# My Personal Homeserver
 
-This repository contains the configuration and architecture of my personal home server, a project built to centralize my digital life. Designed to run on a Raspberry Pi 4, this setup focuses on privacy, modularity, and security, leveraging containerized services and high-performance tools like Tailscale, OpenMediaVault, and Cockpit.
+Personal home server configuration built around privacy, modularity, and low maintenance overhead. Runs on a Lenovo ThinkCentre (i3-6100T, 8GB RAM) on Debian Trixie (amd64), using rootless Podman with systemd user services.
 
-## Architecture & Services
+Remote access is handled exclusively through [Tailscale](https://tailscale.com/) — no ports exposed to the public internet.
 
-The infrastructure is divided into independent stacks to simplify management and backups:
+---
 
-#### Core
+## Architecture
 
-- **Vaultwarden**: Self-hosted Bitwarden-compatible password manager (no cloud leaks).
-- Radicale: A lightweight CalDAV/CardDAV server to host calendars and contacts, compatible with most clients.
+Each stack is an independent Podman Compose project managed as a systemd user service. This keeps concerns isolated: restarting or updating one pod doesn't affect the others.
 
-#### Gateway
+| Pod | Services |
+|---|---|
+| `core` | Vaultwarden, Radicale |
+| `gateway` | Pi-hole, Unbound |
+| `immich` | Immich Server, Machine Learning, Redis, Postgres |
+| `miniflux` | Miniflux, Postgres |
+| `storage` | Syncthing, Filebrowser, Kavita |
+| `suwayomi` | Suwayomi (Tachidesk), FlareSolverr |
+| `utils` | Homepage, Uptime Kuma, Ntfy |
 
-- Unbound: A DNS resolver that provides additional privacy and performance for your network, running as a local recursive DNS server.
-- **Pi-hole**: Network-wide DNS filtering for ads and trackers, directly on your LAN.
+### Core
 
-#### Storage
+- **Vaultwarden** — Self-hosted Bitwarden-compatible password manager.
+- **Radicale** — Lightweight CalDAV/CardDAV server for calendars and contacts.
 
-- Syncthing: Continuous file synchronization across devices.
-- Filebrowser: Web-based file manager with SMB/NFS support.
-- Kavita: A self-hosted digital library manager for ebooks, comics, and manga.
+### Gateway
 
-#### Utils
+- **Pi-hole** — Network-wide DNS-based ad and tracker blocking.
+- **Unbound** — Local recursive DNS resolver, used as Pi-hole's upstream.
 
-- Homepage: Modern dashboard for quick access to all your services in one place.
-- Uptime Kuma: Simple status page monitoring for your main services.
+### Immich
 
-#### Immich
+- **Immich** — Self-hosted photo and video management with ML-powered search and face recognition.
 
-- Immich: High-performance self-hosted photo and video management with AI-powered recognition.
+### Miniflux
+
+- **Miniflux** — Minimalist RSS reader with a built-in Postgres backend.
+
+### Storage
+
+- **Syncthing** — Continuous file synchronization across devices.
+- **Filebrowser** — Web-based file manager for NAS access.
+- **Kavita** — Self-hosted digital library for ebooks, manga, and comics.
+
+### Suwayomi
+
+- **Suwayomi (Tachidesk)** — Self-hosted manga server compatible with Tachiyomi clients.
+- **FlareSolverr** — Cloudflare bypass proxy used by Suwayomi extensions.
+
+### Utils
+
+- **Homepage** — Service dashboard with real-time status widgets.
+- **Uptime Kuma** — Lightweight uptime monitoring and alerting.
+- **Ntfy** — Self-hosted push notification server.
+
+---
 
 ## Hardware & Software Stack
 
-- Hardware: Raspberry Pi 4B (4GB+ RAM recommended).
-- OS: Debian / Raspberry Pi OS Lite.
-- Container Engine: Podman (or Docker) with Compose support.
-- Storage: [OpenMediaVault](https://www.openmediavault.org/) for RAID and share management.
-- VPN: [Tailscale](https://tailscale.com/) for zero-config secure remote access.
-- Admin: [Cockpit](https://cockpit-project.org/) for low-level container and system monitoring.
-- Backup scripts (with logging), for your home files and Immich database.
+- **Hardware**: Lenovo ThinkCentre M700 (i3-6100T, 8GB RAM)
+- **OS**: Debian Trixie (amd64)
+- **Container engine**: Rootless Podman with `podman-compose`
+- **Service management**: systemd user services (`podman-compose@.service` template)
+- **VPN**: Tailscale (MagicDNS for internal service routing)
+- **Admin**: Cockpit (system and container monitoring)
+- **Storage monitoring**: `smartmontools` + `smartd` with Ntfy alerts
 
-## Quick Start
+---
 
-1. Clone & Configure:
+## Setup
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/ncorrea-13/homeserver
-cp .env.example .env
-# Edit .env with your specific paths and credentials
+cd homeserver
 ```
 
-2. Storage: Set up your drives and shared folders in OpenMediaVault.
+### 2. Configure each pod
 
-3. Deploy Stacks:
+Every pod has its own `.env.example`. Copy and fill in your values:
 
 ```bash
-# Deploying with podman-compose or docker-compose
-podman-compose -f gateway/compose.yaml up -d
-podman-compose -f immich/compose.yaml up -d
-podman-compose -f utils/compose.yaml up -d
+for pod in core gateway immich miniflux storage suwayomi utils; do
+  cp $pod/.env.example $pod/.env
+  $EDITOR $pod/.env
+done
 ```
 
-4. Access: Open your browser at your Pi's IP to access the Homepage dashboard.
+### 3. Create Podman secrets
 
-## Automation & Backup
+Sensitive credentials (Pi-hole web password, Miniflux admin password) are stored as Podman secrets and never written to `.env` files:
 
-The included scripts/backup_nas.sh handles data integrity:
+```bash
+echo "your_pihole_password"     | podman secret create pi_password -
+echo "your_miniflux_password"   | podman secret create miniflux_admin_password -
+```
 
-- Database Dumps: Atomic backups for Immich (Postgres) and Vaultwarden.
-- Incremental Sync: Uses rsync for critical data folders.
-- Retention: 15-day automatic rotation.
-- Health Checks: Monitors system voltage and backup logs.
+Verify they exist:
 
-> Tip: Schedule this via cron to ensure your data is always safe.
+```bash
+podman secret ls
+```
 
-## Best Practices
+> **Note**: DB passwords for Immich and Miniflux live in each pod's `.env` file. These are excluded from version control via `.gitignore`.
 
-- Security: Access services via Tailscale VPN; avoid exposing ports to the public internet.
-- Maintenance: Regularly run podman-compose pull to keep images updated.
-- Environment: Never commit your .env file to version control.
-- Monitoring: Periodically check Pi temperature and disk health via Cockpit.
+### 4. Deploy
+
+Each pod is managed as a systemd user service. Assuming the `podman-compose@.service` template is in place:
+
+```bash
+for pod in core gateway immich miniflux storage suwayomi utils; do
+  systemctl --user enable --now podman-compose@$pod
+done
+```
+
+Or bring up a single pod manually:
+
+```bash
+cd gateway && podman-compose up -d
+```
+
+Recommended startup order: `gateway` → `core` → rest.
+
+---
+
+## Security Notes
+
+- All services are accessed exclusively over Tailscale. No ports are forwarded on the router.
+- `.env` files are excluded from version control. See `.gitignore`.
+- Podman secrets are used for credentials that support `_FILE`-style env vars.
+- Pi-hole runs with `network_mode: host` and `NET_BIND_SERVICE` to bind to port 53.
+
+---
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License — see [LICENSE](LICENSE) for details.
 
-*Mendoza, Argentina — Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))*
+*Mendoza, Argentina — Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))*## License

@@ -1,13 +1,38 @@
-*.db
-*.sqlite3
-*.log
+# ─── Credentials ────────────────────────────────────────
+**/.env
 
+# ─── Service data (persistent volumes) ──────────────────
 **/vaultwarden/
+**/radicale/data/
 **/pihole/etc-pihole/
+**/pihole/etc-dnsmasq.d/
+**/db_data/
+**/postgress/
+**/tachidesk/
 **/uptime-kuma-data/
 **/syncthing/config/
-**/filebrowser/filebrowser.db
-**/immich_db/
-**/immich_data/
+**/filebrowser/
+**/kavita/
+**/ntfy/
+**/model-cache/
+**/library/
+**/immich-go/
 
-.env
+# ─── Secrets exported to file ────────────────────────────
+**/secrets/
+**/*.key
+**/*.crt
+**/*.pem
+
+# ─── Logs & DBs ──────────────────────────────────────────
+*.log
+*.db
+*.sqlite3
+
+# ─── Editor & OS ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
