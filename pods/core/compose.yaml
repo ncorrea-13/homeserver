@@ -5,12 +5,12 @@ services:
     restart: always
     environment:
       - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN}
-      - SIGNUPS_ALLOWED=false # Recomendado false para repo público
-      - TZ=${TIMEZONE}
+      - SIGNUPS_ALLOWED=${VAULTWARDEN_SIGNUPS_ALLOWED:-true}
+      - TZ=${TZ}
     volumes:
       - ./vaultwarden:/data:Z
     ports:
-      - "8081:80"
+      - "${VAULTWARDEN_PORT:-8081}:80"
     tmpfs:
       - /tmp:size=64M
     logging:
@@ -21,10 +21,10 @@ services:
     container_name: radicale
     restart: unless-stopped
     ports:
-      - "5232:5232"
+      - "${RADICALE_PORT:-5232}:5232"
     volumes:
       - ./radicale:/data:Z
       - ./radicale/config:/etc/radicale/config:Z
     command: ["--config", "/data/config"]
     environment:
-      - TZ={TIMEZONE}
+      - TZ=${TZ}
