@@ -3,9 +3,13 @@ services:
     container_name: pihole
     image: docker.io/pihole/pihole:latest
     network_mode: host
+    restart: always
+    shm_size: '256mb'
     environment:
-      TZ: ${TIMEZONE}
-      FTLCONF_webserver_port: 8080
+      TZ: ${TZ}
+      WEBPASSWORD_FILE: /run/secrets/pi_password
+      FTLCONF_webserver_port: ${PIHOLE_WEB_PORT:-8085}
+      FTLCONF_webserver_tls_enabled: 'false'
       FTLCONF_webserver_trusted_hosts: ${PIHOLE_TRUSTED_HOSTS}
       DNSMASQ_LISTENING: 'all'
     secrets:
@@ -15,7 +19,7 @@ services:
       - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d:Z
     cap_add:
       - NET_ADMIN
-    restart: always
+      - NET_BIND_SERVICE
     tmpfs:
       - /tmp:size=64M
       - /run:size=16M
@@ -26,11 +30,12 @@ services:
 
   unbound:
     container_name: unbound
-    image: localhost/mi-unbound:latest
+    image: docker.io/klutchell/unbound:latest
     network_mode: host
     restart: always
+    command: ["-c", "/etc/unbound/unbound.conf", "-d"]
     volumes:
-      - ./unbound-build/unbound.conf:/etc/unbound/unbound.conf:Z
+      - ./unbound/unbound.conf:/etc/unbound/unbound.conf:Z
     logging:
       driver: journald
 
