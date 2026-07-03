@@ -1,5 +1,8 @@
 # My Personal Homeserver
 
+> [!Note]
+> [Spanish version](https://debian-pc.tail383faf.ts.net/)
+
 Personal home server configuration built around privacy, modularity, and low maintenance overhead. Runs on a Lenovo ThinkCentre (i3-6100T, 8GB RAM) on Debian Trixie (amd64), using rootless Podman with systemd user services.
 
 Remote access is handled exclusively through [Tailscale](https://tailscale.com/) — no ports exposed to the public internet.
