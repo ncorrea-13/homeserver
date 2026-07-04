@@ -1,0 +1,91 @@
+name: entertainment
+
+networks:
+  suwayomi-net:
+    driver: bridge
+
+services:
+  suwayomi:
+    image: ghcr.io/suwayomi/suwayomi-server:latest
+    container_name: tachidesk
+    restart: unless-stopped
+    ports:
+      - "${SUWAYOMI_PORT:-4567}:4567"
+    environment:
+      - TZ=${TZ}
+      - TACHIDESK_DATA_DIR=/home/suwayomi/.local/share/Tachidesk
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx512m
+    volumes:
+      - ./tachidesk:/home/suwayomi/.local/share/Tachidesk:Z
+    networks:
+      - suwayomi-net
+    deploy:
+      resources:
+        limits:
+          memory: 1280M
+    logging:
+      driver: journald
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    ports:
+      - "${FLARESOLVERR_PORT:-8191}:8191"
+    environment:
+      - LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:-info}
+    networks:
+      - suwayomi-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: journald
+
+  miniflux:
+    image: docker.io/miniflux/miniflux:latest
+    container_name: miniflux
+    ports:
+      - "${MINIFLUX_PORT:-8086}:8080"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - RUN_MIGRATIONS=1
+      - ADMIN_USERNAME=${MINIFLUX_ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASSWORD}
+    depends_on:
+      - db
+    restart: always
+    logging:
+      driver: journald
+
+  db:
+    image: docker.io/library/postgres:15-alpine
+    container_name: miniflux_db
+    environment:
+      - POSTGRES_USER=${MINIFLUX_DB_USER:-miniflux}
+      - POSTGRES_DB=${MINIFLUX_DB_NAME:-miniflux}
+      - POSTGRES_PASSWORD=${MINIFLUX_DB_PASSWORD}
+    volumes:
+      - ./db_data:/var/lib/postgresql/data:Z
+    restart: always
+    logging:
+      driver: journald
+
+  kavita:
+    image: docker.io/jvmilazz0/kavita:latest
+    container_name: kavita
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - DOTNET_gcServer=0
+      - DOTNET_GCConserveMemory=9
+    ports:
+      - "${KAVITA_PORT:-5000}:5000"
+    volumes:
+      - ${KAVITA_CALIBRE_PATH}:/srv/Calibre:rw
+      - ${KAVITA_COMIC_PATH}:/srv/Comic:rw
+      - ${KAVITA_MANGA_PATH}:/srv/Manga:rw
+      - ./kavita:/kavita/config:Z
+    logging:
+      driver: journald

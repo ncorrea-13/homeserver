@@ -1,4 +1,27 @@
 services:
+  syncthing:
+    image: docker.io/linuxserver/syncthing:latest
+    container_name: syncthing
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=${TZ}
+      - STGUIADDRESS=0.0.0.0:${SYNCTHING_UI_PORT:-8384}
+    volumes:
+      - ./syncthing/config:/config:Z
+      - ${SYNCTHING_DATA_PATH}:/var/sync:Z
+    ports:
+      - "${SYNCTHING_UI_PORT:-8384}:8384"
+      - "22000:22000/tcp"
+      - "22000:22000/udp"
+      - "21027:21027/udp"
+    restart: always
+    tmpfs:
+      - /tmp:size=50M
+      - /run:size=50M
+    logging:
+      driver: journald
+
   filebrowser:
     image: docker.io/filebrowser/filebrowser:latest
     container_name: filebrowser
@@ -20,29 +43,6 @@ services:
     volumes:
       - ${FILEBROWSER_ROOT}:/srv:rw
       - ./filebrowser:/config:rw
-    logging:
-      driver: journald
-
-  syncthing:
-    image: docker.io/linuxserver/syncthing:latest
-    container_name: syncthing
-    environment:
-      - PUID=0
-      - PGID=0
-      - TZ=${TZ}
-      - STGUIADDRESS=0.0.0.0:8384
-    volumes:
-      - ./syncthing/config:/config:Z
-      - ${SYNCTHING_DATA_PATH}:/var/sync:Z
-    ports:
-      - "${SYNCTHING_UI_PORT:-8384}:8384"
-      - "22000:22000/tcp"
-      - "22000:22000/udp"
-      - "21027:21027/udp"
-    restart: always
-    tmpfs:
-      - /tmp:size=50M
-      - /run:size=50M
     logging:
       driver: journald
 
