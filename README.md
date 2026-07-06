@@ -1,7 +1,7 @@
 # My Personal Homeserver
 
 > [!Note]
-> [Spanish version](https://debian-pc.tail383faf.ts.net/)
+> [Web version (only spanish)](https://ncorrea-homeserver.tail383faf.ts.net/)
 
 Personal home server configuration built around privacy, modularity, and low maintenance overhead. Runs on a Lenovo ThinkCentre (i3-6100T, 8GB RAM) on Debian Trixie (amd64), using rootless Podman with systemd user services.
 
