@@ -15,48 +15,12 @@ Each stack is an independent Podman Compose project managed as a systemd user se
 
 | Pod | Services |
 |---|---|
-| `core` | Vaultwarden, Radicale |
-| `gateway` | Pi-hole, Unbound |
-| `immich` | Immich Server, Machine Learning, Redis, Postgres |
-| `miniflux` | Miniflux, Postgres |
-| `storage` | Syncthing, Filebrowser, Kavita |
-| `suwayomi` | Suwayomi (Tachidesk), FlareSolverr |
-| `utils` | Homepage, Uptime Kuma, Ntfy |
-
-### Core
-
-- **Vaultwarden** — Self-hosted Bitwarden-compatible password manager.
-- **Radicale** — Lightweight CalDAV/CardDAV server for calendars and contacts.
-
-### Gateway
-
-- **Pi-hole** — Network-wide DNS-based ad and tracker blocking.
-- **Unbound** — Local recursive DNS resolver, used as Pi-hole's upstream.
-
-### Immich
-
-- **Immich** — Self-hosted photo and video management with ML-powered search and face recognition.
-
-### Miniflux
-
-- **Miniflux** — Minimalist RSS reader with a built-in Postgres backend.
-
-### Storage
-
-- **Syncthing** — Continuous file synchronization across devices.
-- **Filebrowser** — Web-based file manager for NAS access.
-- **Kavita** — Self-hosted digital library for ebooks, manga, and comics.
-
-### Suwayomi
-
-- **Suwayomi (Tachidesk)** — Self-hosted manga server compatible with Tachiyomi clients.
-- **FlareSolverr** — Cloudflare bypass proxy used by Suwayomi extensions.
-
-### Utils
-
-- **Homepage** — Service dashboard with real-time status widgets.
-- **Uptime Kuma** — Lightweight uptime monitoring and alerting.
-- **Ntfy** — Self-hosted push notification server.
+| `core` | Vaultwarden (password manager), Radicale (CalDAV/CardDAV) |
+| `gateway` | Pi-hole (DNS ad-block), Unbound (upstream resolver) |
+| `immich` | Immich (photos/video, ML search), Redis, Postgres |
+| `entertainment` | Miniflux (RSS) + Postgres, Suwayomi/Tachidesk (manga), FlareSolverr (Cloudflare bypass) |
+| `storage` | Syncthing (file sync), Filebrowser (NAS web UI), Kavita (ebooks/manga/comics) |
+| `utils` | Homepage (dashboard), Uptime Kuma (monitoring), Ntfy (push notifications) |
 
 ---
 
@@ -86,7 +50,7 @@ cd homeserver
 Every pod has its own `.env.example`. Copy and fill in your values:
 
 ```bash
-for pod in core gateway immich miniflux storage suwayomi utils; do
+for pod in core gateway immich entertainment storage utils; do
   cp $pod/.env.example $pod/.env
   $EDITOR $pod/.env
 done
@@ -114,7 +78,7 @@ podman secret ls
 Each pod is managed as a systemd user service. Assuming the `podman-compose@.service` template is in place:
 
 ```bash
-for pod in core gateway immich miniflux storage suwayomi utils; do
+for pod in core gateway immich entertainment storage utils; do
   systemctl --user enable --now podman-compose@$pod
 done
 ```
@@ -142,4 +106,4 @@ Recommended startup order: `gateway` → `core` → rest.
 
 MIT License — see [LICENSE](LICENSE) for details.
 
-*Mendoza, Argentina — Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))*## License
+*Mendoza, Argentina — Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))*
