@@ -6,12 +6,12 @@ services:
       - PUID=0
       - PGID=0
       - TZ=${TZ}
-      - STGUIADDRESS=0.0.0.0:${SYNCTHING_UI_PORT:-8384}
+      - STGUIADDRESS=0.0.0.0:${SYNCTHING_UI_PORT}
     volumes:
       - ./syncthing/config:/config:Z
       - ${SYNCTHING_DATA_PATH}:/var/sync:Z
     ports:
-      - "${SYNCTHING_UI_PORT:-8384}:8384"
+      - "${SYNCTHING_UI_PORT}:8384"
       - "22000:22000/tcp"
       - "22000:22000/udp"
       - "21027:21027/udp"
@@ -29,12 +29,22 @@ services:
     security_opt:
       - label=disable
     ports:
-      - "${FILEBROWSER_PORT:-3670}:8080"
+      - "${FILEBROWSER_PORT}:8080"
     group_add:
       - keep-groups
     environment:
       - TZ=${TZ}
-    command: ["--database", "/config/filebrowser.db", "--root", "/srv", "--address", "0.0.0.0", "--port", "8080"]
+    command:
+      [
+        "--database",
+        "/config/filebrowser.db",
+        "--root",
+        "/srv",
+        "--address",
+        "0.0.0.0",
+        "--port",
+        "8080",
+      ]
     healthcheck:
       test: ["CMD-SHELL", "filebrowser version"]
       interval: 30s
@@ -43,21 +53,5 @@ services:
     volumes:
       - ${FILEBROWSER_ROOT}:/srv:rw
       - ./filebrowser:/config:rw
-    logging:
-      driver: journald
-
-  kavita:
-    image: docker.io/jvmilazz0/kavita:latest
-    container_name: kavita
-    restart: unless-stopped
-    environment:
-      - TZ=${TZ}
-    ports:
-      - "${KAVITA_PORT:-5000}:5000"
-    volumes:
-      - ${KAVITA_CALIBRE_PATH}:/srv/Calibre:rw
-      - ${KAVITA_COMIC_PATH}:/srv/Comic:rw
-      - ${KAVITA_MANGA_PATH}:/srv/Manga:rw
-      - ./kavita:/kavita/config:Z
     logging:
       driver: journald
