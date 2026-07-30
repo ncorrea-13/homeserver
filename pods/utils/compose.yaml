@@ -4,7 +4,7 @@ services:
     container_name: homepage
     restart: unless-stopped
     ports:
-      - "${HOMEPAGE_PORT:-3000}:3000"
+      - "${HOMEPAGE_PORT}:3000"
     volumes:
       - ./homepage/images:/app/public/images:Z
       - ./homepage/config:/app/config:Z
@@ -18,7 +18,7 @@ services:
     container_name: uptime-kuma
     restart: always
     ports:
-      - "${UPTIME_KUMA_PORT:-3001}:3001"
+      - "${UPTIME_KUMA_PORT}:3001"
     volumes:
       - ./uptime-kuma-data:/app/data
       - ${PODMAN_SOCKET}:/var/run/docker.sock:ro
@@ -31,14 +31,14 @@ services:
     image: docker.io/binwiederhier/ntfy:latest
     container_name: ntfy
     restart: unless-stopped
-    user: "${NTFY_UID:-1000}:${NTFY_GID:-1000}"
+    user: "${NTFY_UID}:${NTFY_GID}"
     command: serve
     ports:
-      - "${NTFY_PORT:-2586}:2586"
+      - "${NTFY_PORT}:2586"
     environment:
       TZ: ${TZ}
       NTFY_BASE_URL: ${NTFY_BASE_URL}
-      NTFY_LISTEN_HTTP: ":${NTFY_PORT:-2586}"
+      NTFY_LISTEN_HTTP: ":${NTFY_PORT}"
       NTFY_CACHE_FILE: /var/cache/ntfy/cache.db
       NTFY_AUTH_FILE: /var/lib/ntfy/auth.db
       NTFY_AUTH_DEFAULT_ACCESS: deny-all

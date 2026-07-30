@@ -4,14 +4,14 @@ services:
     image: docker.io/pihole/pihole:latest
     network_mode: host
     restart: always
-    shm_size: '256mb'
+    shm_size: "256mb"
     environment:
       TZ: ${TZ}
       WEBPASSWORD_FILE: /run/secrets/pi_password
-      FTLCONF_webserver_port: ${PIHOLE_WEB_PORT:-8085}
-      FTLCONF_webserver_tls_enabled: 'false'
+      FTLCONF_webserver_port: ${PIHOLE_WEB_PORT}
+      FTLCONF_webserver_tls_enabled: "false"
       FTLCONF_webserver_trusted_hosts: ${PIHOLE_TRUSTED_HOSTS}
-      DNSMASQ_LISTENING: 'all'
+      DNSMASQ_LISTENING: "all"
     secrets:
       - pi_password
     volumes:
