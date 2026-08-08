@@ -1,7 +1,7 @@
 # My Personal Homeserver
 
 > [!Note]
-> [Web version (only spanish)](https://ncorrea-homeserver.tail383faf.ts.net/)
+> [Web version (only spanish)](https://homeserver.ncorrea.com.ar)
 
 Personal home server configuration built around privacy, modularity, and low maintenance overhead. Runs on a Lenovo ThinkCentre (i3-6100T, 8GB RAM) on Debian Trixie (amd64), using rootless Podman with systemd user services.
 
@@ -13,14 +13,14 @@ Remote access is handled exclusively through [Tailscale](https://tailscale.com/)
 
 Each stack is an independent Podman Compose project managed as a systemd user service. This keeps concerns isolated: restarting or updating one pod doesn't affect the others.
 
-| Pod | Services |
-|---|---|
-| `core` | Vaultwarden (password manager), Radicale (CalDAV/CardDAV) |
-| `gateway` | Pi-hole (DNS ad-block), Unbound (upstream resolver) |
-| `immich` | Immich (photos/video, ML search), Redis, Postgres |
+| Pod             | Services                                                                                |
+| --------------- | --------------------------------------------------------------------------------------- |
+| `core`          | Vaultwarden (password manager), Radicale (CalDAV/CardDAV)                               |
+| `gateway`       | Pi-hole (DNS ad-block), Unbound (upstream resolver)                                     |
+| `immich`        | Immich (photos/video, ML search), Redis, Postgres                                       |
 | `entertainment` | Miniflux (RSS) + Postgres, Suwayomi/Tachidesk (manga), FlareSolverr (Cloudflare bypass) |
-| `storage` | Syncthing (file sync), Filebrowser (NAS web UI), Kavita (ebooks/manga/comics) |
-| `utils` | Homepage (dashboard), Uptime Kuma (monitoring), Ntfy (push notifications) |
+| `storage`       | Syncthing (file sync), Filebrowser (NAS web UI), Kavita (ebooks/manga/comics)           |
+| `utils`         | Homepage (dashboard), Uptime Kuma (monitoring), Ntfy (push notifications)               |
 
 ---
 
@@ -106,4 +106,4 @@ Recommended startup order: `gateway` → `core` → rest.
 
 MIT License — see [LICENSE](LICENSE) for details.
 
-*Mendoza, Argentina — Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))*
+_Mendoza, Argentina — Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))_
