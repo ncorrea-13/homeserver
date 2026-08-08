@@ -1,19 +1,21 @@
 ---
 layout:
-    Infraestructura:
-      style: row
-      columns: 4
-    Almacenamiento y Seguridad:
-      style: row
-      columns: 4
-
-weather:
-   weatherapi: {{HOMEPAGE_VAR_WEATHERAPI_KEY}}
-   openweathermap: {{HOMEPAGE_VAR_OPENWEATHER_KEY}}
+  Infraestructura:
+    style: row
+    columns: 5
+  Almacenamiento:
+    style: row
+    columns: 4
+  Entretenimiento:
+    style: row
+    columns: 3
 
 background: "/images/wallpaper.jpg"
 backgroundOpacity: 0.4
 backgroundBlur: "sm"
+
 cardBlur: "md"
 theme: dark
 headerStyle: clean
+statusStyle: dot
+target: _blank

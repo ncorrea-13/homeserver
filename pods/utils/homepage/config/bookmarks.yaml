@@ -1,18 +1,45 @@
 ---
-# For configuration options and examples, please see:
-# https://gethomepage.dev/configs/bookmarks
-
-- Developer:
+- Webs:
     - Github:
-        - abbr: GH
+        - icon: github.png
+          description: Code hosting and version control
           href: https://github.com/
-
-- Social:
     - Reddit:
-        - abbr: RE
+        - icon: reddit.png
+          description: Communities and discussions
           href: https://reddit.com/
-
-- Entertainment:
     - YouTube:
-        - abbr: YT
+        - icon: youtube.png
+          description: Video streaming platform
           href: https://youtube.com/
+- Entertainment funnel:
+    - Miniflux:
+        - icon: miniflux.png
+          href: https://webhook.{TS_DOMAIN}/hooks/funnel-miniflux
+          description: RSS feed reader
+          target: _self
+    - Kavita:
+        - icon: kavita.png
+          href: https://webhook.{TS_DOMAIN}/hooks/funnel-kavita
+          description: Manga and comics library
+          target: _self
+    - Suwayomi:
+        - icon: suwayomi.png
+          href: https://webhook.{TS_DOMAIN}/hooks/funnel-suwayomi
+          description: Manga online sources
+          target: _self
+- Storage funnel:
+    - Filebrowser:
+        - icon: filebrowser.png
+          href: https://webhook.{TS_DOMAIN}/hooks/funnel-filebrowser
+          description: File manager
+          target: _self
+    - Apagar Funnel:
+        - icon: tailscale.png
+          href: https://webhook.{TS_DOMAIN}/hooks/funnel-off
+          description: Disable public access
+          target: _self
+    - Portfolio:
+        - icon: /images/portfolio.svg
+          description: Personal portfolio site
+          href: https://{TS_DOMAIN}

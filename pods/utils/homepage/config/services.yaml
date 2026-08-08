@@ -1,33 +1,50 @@
 - Infraestructura:
     - Cockpit:
         icon: si-cockpit
-        href: https://{{TS_DOMAIN}:9090
-
-    - Open Media Vault:
-        icon: openmediavault.png
-        href: https://{{TS_DOMAIN}:444
+        href: https://cockpit.{TS_DOMAIN}
 
     - Pi-hole:
         icon: pi-hole.png
-        href: https://{{TS_DOMAIN}:8443/admin/login
+        href: https://pihole.{TS_DOMAIN}/admin/login
 
-    - Uptime Kuma:
-        icon: uptime-kuma.png
-        href: https://{{TS_DOMAIN}:3001
-
-- Almacenamiento y Seguridad:
-    - File Browser Quantum:
-        icon: filebrowser-quantum.png
-        href: https://{{TS_DOMAIN}:3670
-
-    - Immich:
-        icon: immich.png
-        href: https://{{TS_DOMAIN}:2283
-
-    - Syncthing:
-        icon: syncthing.png
-        href: https://{{TS_DOMAIN}}:8384
+    - Ntfy:
+        icon: ntfy.png
+        href: https://ntfy.{TS_DOMAIN}
 
     - Vaultwarden:
         icon: vaultwarden.png
-        href: https://{{TS_DOMAIN}}:8081/#/login
+        href: https://vaultwarden.{TS_DOMAIN}
+
+    - Uptime Kuma:
+        icon: uptime-kuma.png
+        href: https://uptime.{TS_DOMAIN}
+
+- Almacenamiento:
+    - File Browser:
+        icon: filebrowser-quantum.png
+        href: https://filebrowser.{TS_DOMAIN}
+
+    - Immich:
+        icon: immich.png
+        href: https://immich.{TS_DOMAIN}
+
+    - Syncthing:
+        icon: syncthing.png
+        href: https://syncthing.{TS_DOMAIN}
+
+    - Radicale:
+        icon: radicale.png
+        href: https://radicale.{TS_DOMAIN}
+
+- Entretenimiento:
+    - Kavita:
+        icon: kavita.png
+        href: https://kavita.{TS_DOMAIN}
+
+    - Miniflux:
+        icon: miniflux.png
+        href: https://miniflux.{TS_DOMAIN}
+
+    - Suwayomi:
+        icon: suwayomi.png
+        href: https://suwayomi.{TS_DOMAIN}
