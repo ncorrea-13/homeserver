@@ -1,0 +1,124 @@
+{
+    email {$ACME_EMAIL}
+}
+
+homeserver.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    root * /srv/landing
+    file_server
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+home.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_HOME}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+immich.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_IMMICH}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+webhook.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_WEBHOOK}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+ntfy.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_NTFY}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+uptime.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_UPTIME}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+filebrowser.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_FILEBROWSER}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+suwayomi.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_SUWAYOMI}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+kavita.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_KAVITA}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+radicale.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_RADICALE}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+miniflux.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_MINIFLUX}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+syncthing.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_SYNCTHING}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+pihole.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_PIHOLE}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+cockpit.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_COCKPIT}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}
+
+vaultwarden.{$TS_DOMAIN} {
+    bind {$BIND_IP}
+    reverse_proxy {$BIND_IP}:{$PORT_VAULTWARDEN}
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}

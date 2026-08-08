@@ -28,6 +28,21 @@ services:
     logging:
       driver: journald
 
+  caddy:
+    container_name: caddy
+    image: docker.io/caddybuilds/caddy-cloudflare:latest
+    network_mode: host
+    restart: always
+    env_file:
+      - ./caddy/caddy.env
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:Z
+      - ./caddy/data:/data:Z
+      - ./caddy/config:/config:Z
+      - ${LANDING}:/srv/landing:ro,Z
+    logging:
+      driver: journald
+
   unbound:
     container_name: unbound
     image: docker.io/klutchell/unbound:latest
