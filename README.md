@@ -1,7 +1,7 @@
 # My Personal Homeserver
 
 > [!Note]
-> [Web version (only spanish)](https://homeserver.ncorrea.com.ar)
+> [Web version](https://homeserver.ncorrea.com.ar)
 
 Personal home server configuration built around privacy, modularity, and low maintenance overhead. Runs on a Lenovo ThinkCentre (i3-6100T, 8GB RAM) on Debian Trixie (amd64), using rootless Podman with systemd user services.
 
