@@ -1,0 +1,16 @@
+services:
+  homepage:
+    image: docker.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    ports:
+      - "${HOMEPAGE_PORT}:3000"
+    volumes:
+      - ./homepage/images:/app/public/images:Z
+      - ./homepage/config:/app/config:Z
+    environment:
+      - TZ=${TZ}
+      - HOMEPAGE_VAR_SERVER_HOST_VALIDATION=false
+      - HOMEPAGE_ALLOWED_HOSTS=${HOMEPAGE_ALLOWED_HOSTS}
+      - HOMEPAGE_VAR_OPENWEATHER_KEY=${HOMEPAGE_VAR_OPENWEATHER_KEY}
+      - HOMEPAGE_VAR_TS_DOMAIN=${HOMEPAGE_DOMAIN}
