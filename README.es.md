@@ -54,7 +54,7 @@ La versión web linkeada arriba no forma parte de este repositorio. Vive en la c
 ### 1. Cloná el repositorio
 
 ```bash
-git clone https://github.com/ncorrea-13/homelab
+git clone https://github.com/ncorrea-13/homeserver
 cd homelab
 ```
 

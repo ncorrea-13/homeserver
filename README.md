@@ -54,7 +54,7 @@ The web version linked at the top of this page is not part of this repository. I
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/ncorrea-13/homelab
+git clone https://github.com/ncorrea-13/homeserver
 cd homelab
 ```
 
