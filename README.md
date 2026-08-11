@@ -3,7 +3,7 @@
 > (aka Home Server)
 
 > [!Note]
-> [Web version](https://homeserver.ncorrea.com.ar)
+> [Web version](https://homelab.ncorrea.com.ar)
 
 This is my personal homelab.
 
@@ -54,7 +54,7 @@ The web version linked at the top of this page is not part of this repository. I
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/ncorrea-13/homeserver
+git clone https://github.com/ncorrea-13/homelab
 cd homelab
 ```
 
