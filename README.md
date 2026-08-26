@@ -1,100 +1,89 @@
+<div align="center">
+
 # My Personal Homelab
 
-> (aka Home Server)
+**Self-hosted infra across three machines, managed as Podman Compose pods and systemd user services**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Podman](https://img.shields.io/badge/Podman-Compose-892CA0?logo=podman&logoColor=white)](https://podman.io)
+[![systemd](https://img.shields.io/badge/systemd-user%20services-1793D1?logo=linux&logoColor=white)](https://www.freedesktop.org/wiki/Software/systemd/)
+
+</div>
+
+---
+
+[Español](README.es.md)
 
 > [!Note]
 > [Web version](https://homelab.ncorrea.com.ar)
 
-This is my personal homelab.
+This is my personal homelab. It runs photos, files, media, DNS/reverse proxy, and push notifications for personal use, spread across a mini-PC, a Raspberry Pi, and an old phone. No CI, no deploy pipeline — each machine pulls this repo and runs its own pods locally.
 
 ## Machines
 
-| Hardware                   | Role                                 |
-| -------------------------- | ------------------------------------ |
-| `Lenovo ThinkCentre M710q` | Main services (photos, files, media) |
-| `Raspberry-pi 4B`          | Network gateway (DNS, reverse proxy) |
-| `Samsung Galaxy s9+`       | Push notifications relay             |
+| Hardware                | Role                                  |
+| ------------------------ | ------------------------------------ |
+| Lenovo ThinkCentre M710q | Main services (photos, files, media)  |
+| Raspberry Pi 4B          | Network gateway (DNS, reverse proxy)  |
+| Samsung Galaxy S9+       | Push notifications relay              |
 
-Each machine has its own folder in this repository, with its own pods and its own `.env` files.
+Each machine has its own folder in this repo, with its own pods and its own `.env` files.
 
-## Architecture
+## Stack
 
-### thinkcentre
+| Layer               | Tech                                                    |
+| ------------------- | -------------------------------------------------------- |
+| Orchestration        | Podman Compose, systemd user services                    |
+| Reverse proxy / TLS  | Caddy (Cloudflare DNS challenge)                          |
+| DNS                  | Pi-hole, Unbound                                          |
+| Photos / video       | Immich, PostgreSQL, Redis                                 |
+| Password manager     | Vaultwarden                                               |
+| CalDAV/CardDAV       | Radicale                                                  |
+| File sync / browser  | Syncthing, Filebrowser                                    |
+| RSS / manga / ebooks | Miniflux + PostgreSQL, Suwayomi, Kavita, FlareSolverr      |
+| Dashboard            | Homepage                                                  |
+| Monitoring           | Uptime Kuma                                               |
+| Push notifications   | ntfy (on the s9+, over Termux + proot-distro Debian)      |
+| Networking mesh      | Tailscale                                                 |
 
-Each stack is a separate Podman Compose project, managed as a systemd user service. This keeps things separate, so restarting or updating one pod does not affect the others.
-
-| Pod             | Services                                                                          |
-| --------------- | --------------------------------------------------------------------------------- |
-| `core`          | Vaultwarden (password manager), Radicale (CalDAV/CardDAV)                         |
-| `immich`        | Immich (photos and video), Redis, Postgres                                        |
-| `entertainment` | Miniflux (RSS) + Postgres, Suwayomi (manga), Kavita (ebooks/comics), FlareSolverr |
-| `storage`       | Syncthing (file sync), Filebrowser (NAS web UI)                                   |
-| `utils`         | Homepage (dashboard)                                                              |
-
-### raspberry
-
-| Pod       | Services                                                                                           |
-| --------- | -------------------------------------------------------------------------------------------------- |
-| `gateway` | Pi-hole (DNS ad-block), Caddy (reverse proxy, TLS via Cloudflare DNS), Unbound (upstream resolver) |
-| `utils`   | Uptime Kuma (monitoring)                                                                           |
-
-### s9+
-
-Runs inside a proot-distro Debian rootfs on Termux, started at boot:
-
-- `ntfy-start.sh` starts the Ntfy server, used for push notifications from every machine.
-- `check-pi.sh` checks if the raspberry gateway is online and sends a push alert if it is down.
-
-## Public Landing Page
-
-The web version linked at the top of this page is not part of this repository. It lives in the `servidor` directory of [ncorrea-13/portfolio](https://github.com/ncorrea-13/portfolio), and it is exposed through a Cloudflare Tunnel, not through the gateway pod. However, it runs on the Raspberry Pi.
-
-## Setup
-
-### 1. Clone the repository
+## Quick Start
 
 ```bash
 git clone https://github.com/ncorrea-13/homelab
 cd homelab
 ```
 
-### 2. Configure each pod
-
-Every pod has its own `.env.example`. Copy it and fill in your values.
+Copy each pod's `.env.example` and fill in real values (see [Environment variables](#environment-variables)):
 
 ```bash
 # thinkcentre
 for pod in core immich entertainment storage utils; do
   cp thinkcentre/pods/$pod/.env.example thinkcentre/pods/$pod/.env
-  vim thinkcentre/pods/$pod/.env
 done
 
 # raspberry
 for pod in gateway utils; do
   cp raspberry/pods/$pod/.env.example raspberry/pods/$pod/.env
-  vim raspberry/pods/$pod/.env
 done
 cp raspberry/pods/gateway/caddy/caddy.env.example raspberry/pods/gateway/caddy/caddy.env
 
 # s9+
 cp s9+/proot-distro/.env.example s9+/proot-distro/.env
-vim s9+/proot-distro/.env
 ```
 
-### 3. Create Podman secrets
-
-Sensitive credentials are stored as Podman secrets and never written to `.env` files.
+Sensitive credentials go in Podman secrets, never in `.env`:
 
 ```bash
 echo "your_pihole_password" | podman secret create pi_password -
-podman secret ls
 ```
 
-> **Note**: DB passwords for Immich and Miniflux live in each pod's `.env` file instead of a Podman secret.
+Bring up a single pod manually (container-only path, no systemd needed):
 
-### 4. Deploy
+```bash
+cd thinkcentre/pods/immich && podman-compose up -d
+```
 
-Each pod is managed as a systemd user service. If the `podman-compose@.service` template is set up, run this on the right machine:
+Or, once the `podman-compose@.service` template is set up, run each pod as a systemd user service:
 
 ```bash
 # on thinkcentre
@@ -108,46 +97,119 @@ for pod in gateway utils; do
 done
 ```
 
-Or bring up a single pod manually:
+### Phone implementation (s9+)
+The s9+ has no systemd, so it's set up by hand instead. Install Termux and the Termux:Boot add-on (both from F-Droid), then inside Termux:
 
 ```bash
-cd thinkcentre/pods/immich && podman-compose up -d
+pkg install openssh proot-distro
+proot-distro install debian
+proot-distro login debian
+apt install cron
+# install ntfy: see https://docs.ntfy.sh/install/
 ```
 
-On the s9+ phone, ntfy starts automatically at boot through Termux's `start-all.sh`.
+Then, still inside the Debian rootfs:
 
-### 5. Set up s9+
+```bash
+# copy s9+/proot-distro/*.sh and .env into /root/, make the scripts executable
 
-The phone does not use systemd, so this part is manual.
+crontab -e
+# */5 * * * * /root/check-pi.sh
+```
 
-1. Install Termux and the Termux:Boot add-on (both from F-Droid). Termux:Boot is required for `start-all.sh` to run at boot.
-2. Inside Termux, install openssh and proot-distro:
+Finally, back in Termux, copy `s9+/.termux/boot/start-all.sh` into `~/.termux/boot/` and make it executable — it runs `ntfy-start.sh` (the ntfy server) and `check-pi.sh` (pings the raspberry gateway, pushes an alert if it's down) at boot.
 
-   ```bash
-   pkg install openssh proot-distro
-   proot-distro install debian
-   ```
+## Environment variables
 
-3. Log into the Debian rootfs and install cron and ntfy:
+| Pod                        | Variable                                                                 | Required | Description                                        |
+| --------------------------- | ------------------------------------------------------------------------- | -------- | --------------------------------------------------- |
+| thinkcentre/core          | `TZ`                                                                     | No       | Container timezone (default `America/Argentina/Buenos_Aires`) |
+| thinkcentre/core          | `VAULTWARDEN_ADMIN_TOKEN`                                                | Yes      | Admin panel token for Vaultwarden                   |
+| thinkcentre/core          | `VAULTWARDEN_SIGNUPS_ALLOWED`                                            | No       | Allow new account signups                           |
+| thinkcentre/core          | `VAULTWARDEN_PORT`                                                       | Yes      | Vaultwarden host port                               |
+| thinkcentre/core          | `RADICALE_PORT`                                                          | Yes      | Radicale host port                                  |
+| thinkcentre/immich       | `IMMICH_VERSION`                                                         | Yes      | Immich image tag                                    |
+| thinkcentre/immich       | `IMMICH_PORT`                                                            | No       | Immich host port (default `2283`)                   |
+| thinkcentre/immich       | `DB_USERNAME` / `DB_PASSWORD` / `DB_DATABASE_NAME`                       | Yes      | Immich PostgreSQL credentials                       |
+| thinkcentre/immich       | `DB_DATA_LOCATION`                                                       | Yes      | Host path for Postgres data                         |
+| thinkcentre/immich       | `UPLOAD_LOCATION`                                                        | Yes      | Host path for uploaded media                        |
+| thinkcentre/entertainment| `SUWAYOMI_PORT`, `FLARESOLVERR_PORT`, `FLARESOLVERR_LOG_LEVEL`           | Yes/No   | Suwayomi and FlareSolverr host ports/log level      |
+| thinkcentre/entertainment| `MINIFLUX_PORT`, `MINIFLUX_ADMIN_USER`, `MINIFLUX_ADMIN_PASSWORD`        | Yes      | Miniflux port and admin login                       |
+| thinkcentre/entertainment| `MINIFLUX_DB_USER`, `MINIFLUX_DB_NAME`, `MINIFLUX_DB_PASSWORD`, `DATABASE_URL` | Yes | Miniflux PostgreSQL credentials and connection URL  |
+| thinkcentre/entertainment| `KAVITA_PORT`, `KAVITA_CALIBRE_PATH`, `KAVITA_COMIC_PATH`, `KAVITA_MANGA_PATH` | Yes | Kavita port and library host paths                  |
+| thinkcentre/storage      | `SYNCTHING_UI_PORT`, `SYNCTHING_DATA_PATH`                               | Yes      | Syncthing web UI port and data path                 |
+| thinkcentre/storage      | `FILEBROWSER_PORT`, `FILEBROWSER_ROOT`                                   | Yes      | Filebrowser port and served root path               |
+| thinkcentre/utils        | `TS_DOMAIN`                                                              | Yes      | Tailscale domain used for service URLs              |
+| thinkcentre/utils        | `HOMEPAGE_PORT`, `HOMEPAGE_DOMAIN`, `HOMEPAGE_ALLOWED_HOSTS`             | Yes      | Homepage dashboard port/domain/allowed hosts         |
+| thinkcentre/utils        | `HOMEPAGE_VAR_OPENWEATHER_KEY`                                           | No       | OpenWeather API key for the weather widget          |
+| thinkcentre/scripts      | `BACKUP_SOURCE`, `BACKUP_PODMAN_USER`, `BACKUP_PODMAN_UID`               | Yes      | Backup script source path and Podman user/UID       |
+| thinkcentre/scripts      | `BACKUP_NTFY_URL`, `BACKUP_NTFY_USER`, `BACKUP_NTFY_PASS`                | Yes      | ntfy endpoint used for backup notifications         |
+| raspberry/gateway        | `TZ`                                                                     | No       | Container timezone                                  |
+| raspberry/gateway        | `PIHOLE_WEB_PORT`, `PIHOLE_TRUSTED_HOSTS`                                | Yes      | Pi-hole web UI port and trusted host list            |
+| raspberry/gateway        | `LANDING`                                                                | Yes      | Caddy landing page target                           |
+| raspberry/gateway/caddy  | `ACME_EMAIL`, `CF_API_TOKEN`                                             | Yes      | Let's Encrypt email and Cloudflare DNS API token     |
+| raspberry/gateway/caddy  | `TS_DOMAIN`, `BIND_IP`, `S9_IP`, `TC_IP`                                 | Yes      | Tailscale domain and machine IPs used in routing     |
+| raspberry/gateway/caddy  | `PORT_*` (HOME, IMMICH, WEBHOOK, NTFY, UPTIME, FILEBROWSER, SUWAYOMI, KAVITA, RADICALE, MINIFLUX, SYNCTHING, PIHOLE, COCKPIT, VAULTWARDEN) | Yes | Upstream ports Caddy reverse-proxies to |
+| raspberry/utils         | `UPTIME_KUMA_PORT`                                                       | Yes      | Uptime Kuma web UI port                             |
+| raspberry/utils         | `PODMAN_SOCKET`                                                          | No       | Podman socket path monitored by Uptime Kuma          |
+| s9+/proot-distro        | `TZ`                                                                     | No       | Timezone inside the proot-distro Debian rootfs       |
+| s9+/proot-distro        | `NTFY_BASE_URL`, `NTFY_LISTEN_HTTP`, `NTFY_CACHE_FILE`, `NTFY_AUTH_FILE`, `NTFY_AUTH_DEFAULT_ACCESS` | Yes | ntfy server bind address, cache/auth file paths |
+| s9+/proot-distro        | `GATEWAY_CHECK_URL`, `NTFY_PUSH_URL`                                     | Yes      | URL polled to check the gateway and where to push alerts if it's down |
 
-   ```bash
-   proot-distro login debian
-   apt install cron
-   # install ntfy: see https://docs.ntfy.sh/install/
-   ```
+> DB passwords for Immich and Miniflux live in each pod's `.env` instead of a Podman secret.
 
-4. Copy `s9+/proot-distro/*.sh` and `.env` into `/root/` inside the Debian rootfs, and make the scripts executable.
-5. Add a cron job inside the Debian rootfs to run `check-pi.sh` every 5 minutes:
+## Architecture
 
-   ```bash
-   crontab -e
-   # */5 * * * * /root/check-pi.sh
-   ```
+Each pod is a separate Podman Compose project — restarting or updating one does not affect the others. Pod-to-service mapping is in [Project Structure](#project-structure); what each service does is in [Stack](#stack).
 
-6. Copy `s9+/.termux/boot/start-all.sh` into `~/.termux/boot/` in Termux, and make it executable.
+## Backups
+
+thinkcentre/scripts/backup.sh runs on a schedule, taking the destination dir as its only argument (a weekly path runs a full backup, anything else runs a daily incremental one):
+
+1. Dumps the Immich Postgres database and prunes anything older than 15 days.
+2. Backs up the Vaultwarden SQLite file through a throwaway sqlite3 container, same pruning.
+3. Rsyncs the source into the destination, skipping what's already covered above. Daily runs also skip the NAS archive and the Immich photo library; weekly runs take everything.
+4. Logs each step and sends an ntfy notification on success, partial success, or failure.
+
+Both database steps drop to the rootless Podman user so they can reach its socket.
+
+## Public Landing Page
+
+The web version linked at the top isn't part of this repository — it lives in the portfolio project (ncorrea-13/portfolio, servidor directory) and reaches the internet through a Cloudflare Tunnel rather than the gateway pod, though it still runs on the Raspberry Pi.
+
+It gets its data from a status API at status.ncorrea.com.ar, a separate FastAPI project (ncorrea-13/homelab-status) that stores Uptime Kuma's webhook notifications in SQLite and serves them back for the dashboard to read.
+
+## Project Structure
+
+```
+raspberry/
+└── pods/
+    ├── gateway/            # Pi-hole, Caddy, Unbound
+    │   └── caddy/          # Caddyfile, caddy.env.example
+    └── utils/              # Uptime Kuma
+
+thinkcentre/
+├── pods/
+│   ├── core/               # Vaultwarden, Radicale
+│   ├── immich/             # Immich, Postgres, Redis
+│   ├── entertainment/      # Miniflux, Suwayomi, Kavita, FlareSolverr
+│   ├── storage/            # Syncthing, Filebrowser
+│   └── utils/              # Homepage
+└── scripts/
+    └── backup.sh           # Backup job, notifies via ntfy
+
+s9+/
+├── .termux/boot/
+│   └── start-all.sh        # Boot entrypoint on Termux
+└── proot-distro/
+    ├── ntfy-start.sh
+    └── check-pi.sh
+```
 
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.
 
 _Mendoza, Argentina. Nicolás Correa ([ncorrea-13](https://github.com/ncorrea-13))_
+</content>
+</invoke>
