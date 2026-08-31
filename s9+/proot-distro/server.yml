@@ -1,0 +1,2 @@
+auth-file: /root/ntfy-data/ntfy/lib/auth.db
+auth-default-access: deny-all
