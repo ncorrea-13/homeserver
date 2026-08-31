@@ -3,7 +3,6 @@ name: entertainment
 networks:
   suwayomi-net:
     driver: bridge
-
 services:
   suwayomi:
     image: ghcr.io/suwayomi/suwayomi-server:latest
@@ -25,7 +24,6 @@ services:
           memory: 1280M
     logging:
       driver: journald
-
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
@@ -42,36 +40,38 @@ services:
           memory: 512M
     logging:
       driver: journald
-
   miniflux:
     image: docker.io/miniflux/miniflux:latest
     container_name: miniflux
     ports:
       - "${MINIFLUX_PORT}:8080"
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL_FILE=/run/secrets/miniflux_db_url
       - RUN_MIGRATIONS=1
       - ADMIN_USERNAME=${MINIFLUX_ADMIN_USER}
-      - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASSWORD}
+      - ADMIN_PASSWORD_FILE=/run/secrets/miniflux_admin_password
+    secrets:
+      - miniflux_db_url
+      - miniflux_admin_password
     depends_on:
       - db
     restart: always
     logging:
       driver: journald
-
   db:
     image: docker.io/library/postgres:15-alpine
     container_name: miniflux_db
     environment:
       - POSTGRES_USER=${MINIFLUX_DB_USER}
       - POSTGRES_DB=${MINIFLUX_DB_NAME}
-      - POSTGRES_PASSWORD=${MINIFLUX_DB_PASSWORD}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/miniflux_db_password
+    secrets:
+      - miniflux_db_password
     volumes:
       - ./db_data:/var/lib/postgresql/data:Z
     restart: always
     logging:
       driver: journald
-
   kavita:
     image: docker.io/jvmilazz0/kavita:latest
     container_name: kavita
@@ -89,3 +89,11 @@ services:
       - ./kavita:/kavita/config:Z
     logging:
       driver: journald
+
+secrets:
+  miniflux_db_password:
+    external: true
+  miniflux_admin_password:
+    external: true
+  miniflux_db_url:
+    external: true
