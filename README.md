@@ -65,7 +65,7 @@ cp raspberry/pods/gateway/caddy/caddy.env.example raspberry/pods/gateway/caddy/c
 cp s9+/proot-distro/.env.example s9+/proot-distro/.env
 ```
 
-Sensitive credentials go in Podman secrets, never in `.env`:
+Sensitive credentials go in Podman secrets, never in `.env` (see [Secrets](#secrets)):
 
 ```bash
 echo "your_pihole_password" | podman secret create pi_password -
@@ -121,18 +121,17 @@ Finally, back in Termux, copy `s9+/.termux/boot/start-all.sh` into `~/.termux/bo
 | Pod                       | Variable                                                                                                                                   | Required | Description                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | -------- | --------------------------------------------------------------------- |
 | thinkcentre/core          | `TZ`                                                                                                                                       | No       | Container timezone (default `America/Argentina/Buenos_Aires`)         |
-| thinkcentre/core          | `VAULTWARDEN_ADMIN_TOKEN`                                                                                                                  | Yes      | Admin panel token for Vaultwarden                                     |
 | thinkcentre/core          | `VAULTWARDEN_SIGNUPS_ALLOWED`                                                                                                              | No       | Allow new account signups                                             |
 | thinkcentre/core          | `VAULTWARDEN_PORT`                                                                                                                         | Yes      | Vaultwarden host port                                                 |
 | thinkcentre/core          | `RADICALE_PORT`                                                                                                                            | Yes      | Radicale host port                                                    |
 | thinkcentre/immich        | `IMMICH_VERSION`                                                                                                                           | Yes      | Immich image tag                                                      |
 | thinkcentre/immich        | `IMMICH_PORT`                                                                                                                              | Yes      | Immich host port                                                      |
-| thinkcentre/immich        | `DB_USERNAME` / `DB_PASSWORD` / `DB_DATABASE_NAME`                                                                                         | Yes      | Immich PostgreSQL credentials                                         |
-| thinkcentre/immich        | `DB_DATA_LOCATION`                                                                                                                         | Yes      | Host path for Postgres data                                           |
-| thinkcentre/immich        | `UPLOAD_LOCATION`                                                                                                                          | Yes      | Host path for uploaded media                                          |
+| thinkcentre/immich        | `IMMICH_DB_USER` / `IMMICH_DB_NAME`                                                                                                        | Yes      | Immich PostgreSQL user/database name                                  |
+| thinkcentre/immich        | `IMMICH_DB_LOCATION`                                                                                                                       | Yes      | Host path for Postgres data                                           |
+| thinkcentre/immich        | `IMMICH_UPLOAD_LOCATION`                                                                                                                   | Yes      | Host path for uploaded media                                          |
 | thinkcentre/entertainment | `SUWAYOMI_PORT`, `FLARESOLVERR_PORT`, `FLARESOLVERR_LOG_LEVEL`                                                                             | Yes/No   | Suwayomi and FlareSolverr host ports/log level                        |
-| thinkcentre/entertainment | `MINIFLUX_PORT`, `MINIFLUX_ADMIN_USER`, `MINIFLUX_ADMIN_PASSWORD`                                                                          | Yes      | Miniflux port and admin login                                         |
-| thinkcentre/entertainment | `MINIFLUX_DB_USER`, `MINIFLUX_DB_NAME`, `MINIFLUX_DB_PASSWORD`, `DATABASE_URL`                                                             | Yes      | Miniflux PostgreSQL credentials and connection URL                    |
+| thinkcentre/entertainment | `MINIFLUX_PORT`, `MINIFLUX_ADMIN_USER`                                                                                                     | Yes      | Miniflux port and admin login                                         |
+| thinkcentre/entertainment | `MINIFLUX_DB_USER`, `MINIFLUX_DB_NAME`                                                                                                     | Yes      | Miniflux PostgreSQL user/database name                                |
 | thinkcentre/entertainment | `KAVITA_PORT`, `KAVITA_CALIBRE_PATH`, `KAVITA_COMIC_PATH`, `KAVITA_MANGA_PATH`                                                             | Yes      | Kavita port and library host paths                                    |
 | thinkcentre/storage       | `SYNCTHING_UI_PORT`, `SYNCTHING_DATA_PATH`                                                                                                 | Yes      | Syncthing web UI port and data path                                   |
 | thinkcentre/storage       | `FILEBROWSER_PORT`, `FILEBROWSER_ROOT`                                                                                                     | Yes      | Filebrowser port and served root path                                 |
@@ -144,16 +143,34 @@ Finally, back in Termux, copy `s9+/.termux/boot/start-all.sh` into `~/.termux/bo
 | raspberry/gateway         | `TZ`                                                                                                                                       | No       | Container timezone                                                    |
 | raspberry/gateway         | `PIHOLE_WEB_PORT`, `PIHOLE_TRUSTED_HOSTS`                                                                                                  | Yes      | Pi-hole web UI port and trusted host list                             |
 | raspberry/gateway         | `LANDING`                                                                                                                                  | Yes      | Caddy landing page target                                             |
-| raspberry/gateway/caddy   | `ACME_EMAIL`, `CF_API_TOKEN`                                                                                                               | Yes      | Let's Encrypt email and Cloudflare DNS API token                      |
+| raspberry/gateway/caddy   | `ACME_EMAIL`                                                                                                                               | Yes      | Let's Encrypt email                                                   |
 | raspberry/gateway/caddy   | `TS_DOMAIN`, `BIND_IP`, `S9_IP`, `TC_IP`                                                                                                   | Yes      | Tailscale domain and machine IPs used in routing                      |
 | raspberry/gateway/caddy   | `PORT_*` (HOME, IMMICH, WEBHOOK, NTFY, UPTIME, FILEBROWSER, SUWAYOMI, KAVITA, RADICALE, MINIFLUX, SYNCTHING, PIHOLE, COCKPIT, VAULTWARDEN) | Yes      | Upstream ports Caddy reverse-proxies to                               |
 | raspberry/utils           | `UPTIME_KUMA_PORT`                                                                                                                         | Yes      | Uptime Kuma web UI port                                               |
 | raspberry/utils           | `PODMAN_SOCKET`                                                                                                                            | No       | Podman socket path monitored by Uptime Kuma                           |
+| raspberry/utils           | `STATUS_PORT`, `ALLOWED_ORIGIN`                                                                                                            | Yes      | homelab-status-api host port and allowed CORS origin                  |
 | s9+/proot-distro          | `TZ`                                                                                                                                       | No       | Timezone inside the proot-distro Debian rootfs                        |
 | s9+/proot-distro          | `NTFY_BASE_URL`, `NTFY_LISTEN_HTTP`, `NTFY_CACHE_FILE`, `NTFY_AUTH_FILE`, `NTFY_AUTH_DEFAULT_ACCESS`                                       | Yes      | ntfy server bind address, cache/auth file paths                       |
 | s9+/proot-distro          | `GATEWAY_CHECK_URL`, `NTFY_PUSH_URL`                                                                                                       | Yes      | URL polled to check the gateway and where to push alerts if it's down |
 
-> Immich and Miniflux DB passwords live in each pod's `.env` instead of a Podman secret, for implementation simplicity. A secrets manager for both is planned.
+## Secrets
+
+Every credential below is an external Podman secret, created once before bringing up its pod, never written to `.env`:
+
+```bash
+echo "value" | podman secret create <name> -
+```
+
+| Secret                     | Pod                       | Purpose                                |
+| -------------------------- | -------------------------- | --------------------------------------- |
+| `pi_password`               | raspberry/gateway          | Pi-hole web UI password                 |
+| `cf_api_token`               | raspberry/gateway/caddy    | Cloudflare DNS API token for ACME       |
+| `webhook_secret`             | raspberry/utils            | homelab-status-api webhook auth         |
+| `vaultwarden_admin_token`    | thinkcentre/core           | Vaultwarden admin panel token           |
+| `miniflux_db_password`       | thinkcentre/entertainment  | Miniflux PostgreSQL password            |
+| `miniflux_admin_password`    | thinkcentre/entertainment  | Miniflux admin login password           |
+| `miniflux_db_url`            | thinkcentre/entertainment  | Miniflux PostgreSQL connection URL      |
+| `immich_db_password`         | thinkcentre/immich         | Immich PostgreSQL password              |
 
 ## Architecture
 
