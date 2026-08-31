@@ -27,22 +27,6 @@ services:
       - /var/log/lighttpd:size=16M
     logging:
       driver: journald
-
-  caddy:
-    container_name: caddy
-    image: docker.io/caddybuilds/caddy-cloudflare:latest
-    network_mode: host
-    restart: always
-    env_file:
-      - ./caddy/caddy.env
-    volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:Z
-      - ./caddy/data:/data:Z
-      - ./caddy/config:/config:Z
-      - ${LANDING}:/srv/landing:ro,Z
-    logging:
-      driver: journald
-
   unbound:
     container_name: unbound
     image: docker.io/klutchell/unbound:latest
@@ -53,7 +37,28 @@ services:
       - ./unbound/unbound.conf:/etc/unbound/unbound.conf:Z
     logging:
       driver: journald
+  caddy:
+    container_name: caddy
+    image: docker.io/caddybuilds/caddy-cloudflare:latest
+    network_mode: host
+    restart: always
+    env_file:
+      - ./caddy/caddy.env
+    secrets:
+      - cf_api_token
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - 'export CF_API_TOKEN="$$(cat /run/secrets/cf_api_token)"; exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile'
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:Z
+      - ./caddy/data:/data:Z
+      - ./caddy/config:/config:Z
+      - ${LANDING}:/srv/landing:ro,Z
+    logging:
+      driver: journald
 
 secrets:
   pi_password:
+    external: true
+  cf_api_token:
     external: true
