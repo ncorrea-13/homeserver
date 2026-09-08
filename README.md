@@ -149,6 +149,7 @@ Finally, back in Termux, copy `s9+/.termux/boot/start-all.sh` into `~/.termux/bo
 | raspberry/utils           | `UPTIME_KUMA_PORT`                                                                                                                         | Yes      | Uptime Kuma web UI port                                               |
 | raspberry/utils           | `PODMAN_SOCKET`                                                                                                                            | No       | Podman socket path monitored by Uptime Kuma                           |
 | raspberry/utils           | `STATUS_PORT`, `ALLOWED_ORIGIN`                                                                                                            | Yes      | homelab-status-api host port and allowed CORS origin                  |
+| raspberry/deploy-check    | `GITHUB_REPO`, `GITHUB_BRANCH`, `SUBDIR`, `TARGET_DIR`                                                                                     | Yes      | Repo/branch/subdir polled for the landing page and local sync target  |
 | s9+/proot-distro          | `TZ`                                                                                                                                       | No       | Timezone inside the proot-distro Debian rootfs                        |
 | s9+/proot-distro          | `NTFY_BASE_URL`, `NTFY_LISTEN_HTTP`, `NTFY_CACHE_FILE`, `NTFY_AUTH_FILE`, `NTFY_AUTH_DEFAULT_ACCESS`                                       | Yes      | ntfy server bind address, cache/auth file paths                       |
 | s9+/proot-distro          | `GATEWAY_CHECK_URL`, `NTFY_PUSH_URL`                                                                                                       | Yes      | URL polled to check the gateway and where to push alerts if it's down |
@@ -191,14 +192,26 @@ The web version linked above isn't part of this repository. It's an extension of
 
 Its data comes from a status API at <https://status.ncorrea.com.ar>, a separate FastAPI project in this [repo](https://github.com/ncorrea-13/homelab-status) that stores Uptime Kuma's webhook notifications in SQLite and serves them back for the dashboard to read.
 
+`raspberry/deploy-check/docs` keeps the static files in sync. A systemd timer runs `deploy-check-docs.sh` every 5 minutes; it compares the portfolio repo's latest commit SHA against `.deployed-sha` in `TARGET_DIR` and, on change, re-downloads `index.html`, `style.css`, and the architecture diagrams straight from GitHub:
+
+```bash
+cp raspberry/deploy-check/docs/.env.example raspberry/deploy-check/docs/.env
+# fill in GITHUB_REPO, GITHUB_BRANCH, SUBDIR, TARGET_DIR
+
+# install deploy-check.service/.timer as systemd user units, then:
+systemctl --user enable --now deploy-check.timer
+```
+
 ## Project Structure
 
 ```
 raspberry/
-└── pods/
-    ├── gateway/            # Pi-hole, Caddy, Unbound
-    │   └── caddy/          # Caddyfile, caddy.env.example
-    └── utils/              # Uptime Kuma
+├── pods/
+│   ├── gateway/            # Pi-hole, Caddy, Unbound
+│   │   └── caddy/          # Caddyfile, caddy.env.example
+│   └── utils/              # Uptime Kuma
+└── deploy-check/
+    └── docs/               # Polls portfolio repo, syncs landing page static files
 
 thinkcentre/
 ├── pods/
