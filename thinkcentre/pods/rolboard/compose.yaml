@@ -1,0 +1,38 @@
+secrets:
+  rolboard_admin_token:
+    external: true
+
+services:
+  server:
+    container_name: rolboard-server
+    image: ghcr.io/ncorrea-13/rolboard-server:main
+    env_file:
+      - .env
+    secrets:
+      - rolboard_admin_token
+    environment:
+      DB_PATH: /data/campaign.db
+      VAULTS_ROOT: /vaults
+      PORT: 8080
+      ADMIN_TOKEN_FILE: /run/secrets/rolboard_admin_token
+    volumes:
+      - ${DATA_PATH}:/data
+      - ${VAULTS_ROOT_HOST}:/vaults:ro
+    logging:
+      driver: journald
+      options:
+        tag: "rolboard-server"
+    restart: unless-stopped
+
+  client:
+    container_name: rolboard-client
+    image: ghcr.io/ncorrea-13/rolboard-client:main
+    ports:
+      - "${CLIENT_PORT}:80"
+    depends_on:
+      - server
+    logging:
+      driver: journald
+      options:
+        tag: "rolboard-client"
+    restart: unless-stopped
