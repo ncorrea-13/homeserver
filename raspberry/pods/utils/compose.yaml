@@ -15,7 +15,7 @@ services:
       driver: journald
 
   homelab-status-api:
-    build: ./homelab-status
+    image: ghcr.io/ncorrea-13/homelab-status:latest
     healthcheck:
       test: ["CMD", "/healthcheck"]
       interval: 30s
@@ -25,7 +25,7 @@ services:
     container_name: homelab-status-api
     restart: unless-stopped
     ports:
-      - "0.0.0.0:${STATUS_PORT}:8080"
+      - "${STATUS_PORT}:8080"
     volumes:
       - homelab-status-data:/data
     environment:
