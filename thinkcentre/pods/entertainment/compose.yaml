@@ -5,7 +5,7 @@ networks:
     driver: bridge
 services:
   suwayomi:
-    image: ghcr.io/suwayomi/suwayomi-server:latest
+    image: ghcr.io/suwayomi/suwayomi-server:stable@sha256:e59f212ccf91b26de8676a063a2db90256c148c6261535c7c477d47a43d9751b
     container_name: tachidesk
     restart: unless-stopped
     ports:
@@ -25,7 +25,7 @@ services:
     logging:
       driver: journald
   flaresolverr:
-    image: ghcr.io/flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:v3.5.2
     container_name: flaresolverr
     restart: unless-stopped
     ports:
@@ -41,7 +41,7 @@ services:
     logging:
       driver: journald
   miniflux:
-    image: docker.io/miniflux/miniflux:latest
+    image: docker.io/miniflux/miniflux:2.3.3
     container_name: miniflux
     ports:
       - "${MINIFLUX_PORT}:8080"
@@ -59,7 +59,7 @@ services:
     logging:
       driver: journald
   db:
-    image: docker.io/library/postgres:15-alpine
+    image: docker.io/library/postgres:15.19-alpine
     container_name: miniflux_db
     environment:
       - POSTGRES_USER=${MINIFLUX_DB_USER}
@@ -73,7 +73,7 @@ services:
     logging:
       driver: journald
   kavita:
-    image: docker.io/jvmilazz0/kavita:latest
+    image: docker.io/jvmilazz0/kavita:0.9.1
     container_name: kavita
     restart: unless-stopped
     environment:

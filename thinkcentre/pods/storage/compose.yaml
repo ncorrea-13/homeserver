@@ -1,6 +1,6 @@
 services:
   syncthing:
-    image: docker.io/linuxserver/syncthing:latest
+    image: docker.io/linuxserver/syncthing:2.1.5
     container_name: syncthing
     environment:
       - PUID=0
@@ -23,7 +23,7 @@ services:
       driver: journald
 
   filebrowser:
-    image: docker.io/filebrowser/filebrowser:latest
+    image: docker.io/filebrowser/filebrowser:v2.63.23
     container_name: filebrowser
     restart: always
     security_opt:

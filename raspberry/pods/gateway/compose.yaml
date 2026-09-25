@@ -1,7 +1,7 @@
 services:
   pihole:
     container_name: pihole
-    image: docker.io/pihole/pihole:latest
+    image: docker.io/pihole/pihole:2026.09.0
     network_mode: host
     restart: always
     shm_size: "256mb"
@@ -29,7 +29,7 @@ services:
       driver: journald
   unbound:
     container_name: unbound
-    image: docker.io/klutchell/unbound:latest
+    image: docker.io/klutchell/unbound:1.26.1
     network_mode: host
     restart: always
     command: ["-c", "/etc/unbound/unbound.conf", "-d"]
@@ -39,7 +39,7 @@ services:
       driver: journald
   caddy:
     container_name: caddy
-    image: docker.io/caddybuilds/caddy-cloudflare:latest
+    image: docker.io/caddybuilds/caddy-cloudflare:2.11.4
     network_mode: host
     restart: always
     env_file:

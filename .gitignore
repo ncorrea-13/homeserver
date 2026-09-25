@@ -37,3 +37,7 @@ Thumbs.db
 .vscode/
 *.swp
 *~
+
+# ─── Caddy runtime (ACME account, certs) ───────────────
+**/caddy/data/
+**/caddy/config/
