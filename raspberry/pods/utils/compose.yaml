@@ -35,6 +35,18 @@ services:
     secrets:
       - webhook_secret
 
+  turmo:
+    image: ghcr.io/ncorrea-13/turmo-screen:latest
+    container_name: turmo
+    restart: unless-stopped
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    environment:
+      - HEIMDALL_HUB=${HEIMDALL_HUB}
+      - HEIMDALL_TOKEN=${HEIMDALL_TOKEN}
+    logging:
+      driver: journald
+
 volumes:
   homelab-status-data:
 

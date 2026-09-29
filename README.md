@@ -37,6 +37,7 @@ Each machine has its own folder in this repo, with its own pods and its own `.en
 | RSS / manga / ebooks | Miniflux + PostgreSQL, Suwayomi, Kavita, FlareSolverr |
 | Dashboard            | Homepage                                              |
 | Monitoring           | Uptime Kuma                                           |
+| USB screen           | [turmo-screen](https://github.com/ncorrea-13/turmo-screen) + Heimdall             |
 | Push notifications   | ntfy                                                  |
 | Networking mesh      | Tailscale                                             |
 
@@ -149,6 +150,7 @@ Finally, back in Termux, copy `s9+/.termux/boot/start-all.sh` into `~/.termux/bo
 | raspberry/utils           | `UPTIME_KUMA_PORT`                                                                                                                         | Yes      | Uptime Kuma web UI port                                               |
 | raspberry/utils           | `PODMAN_SOCKET`                                                                                                                            | No       | Podman socket path monitored by Uptime Kuma                           |
 | raspberry/utils           | `STATUS_PORT`, `ALLOWED_ORIGIN`                                                                                                            | Yes      | homelab-status-api host port and allowed CORS origin                  |
+| raspberry/utils           | `HEIMDALL_HUB`, `HEIMDALL_TOKEN`                                                                                                           | Yes      | Heimdall hub URL and token used by turmo to render the USB screen     |
 | raspberry/deploy-check    | `GITHUB_REPO`, `GITHUB_BRANCH`, `SUBDIR`, `TARGET_DIR`                                                                                     | Yes      | Repo/branch/subdir polled for the landing page and local sync target  |
 | s9+/proot-distro          | `TZ`                                                                                                                                       | No       | Timezone inside the proot-distro Debian rootfs                        |
 | s9+/proot-distro          | `NTFY_BASE_URL`, `NTFY_LISTEN_HTTP`, `NTFY_CACHE_FILE`, `NTFY_AUTH_FILE`, `NTFY_AUTH_DEFAULT_ACCESS`                                       | Yes      | ntfy server bind address, cache/auth file paths                       |
@@ -209,7 +211,7 @@ raspberry/
 ├── pods/
 │   ├── gateway/            # Pi-hole, Caddy, Unbound
 │   │   └── caddy/          # Caddyfile, caddy.env.example
-│   └── utils/              # Uptime Kuma
+│   └── utils/              # Uptime Kuma, status API, turmo
 └── deploy-check/
     └── docs/               # Polls portfolio repo, syncs landing page static files
 

@@ -38,6 +38,7 @@ Cada dispositivo tiene su propia carpeta en este repo, con sus propios pods y su
 | Panel de inicio       | Homepage                                              |
 | Panel de control      | Cockpit                                               |
 | Monitoreo             | Uptime Kuma                                           |
+| Pantalla USB          | [turmo-screen](https://github.com/ncorrea-13/turmo-screen) + Heimdall            |
 | Notificaciones push   | Ntfy                                                  |
 | Red mesh              | Tailscale                                             |
 
@@ -150,6 +151,7 @@ Por último, de vuelta en Termux, copiá `s9+/.termux/boot/start-all.sh` a `~/.t
 | raspberry/utils           | `UPTIME_KUMA_PORT`                                                                                                                         | Sí        | Puerto de UI web de Uptime Kuma                                    |
 | raspberry/utils           | `PODMAN_SOCKET`                                                                                                                            | No        | Path del socket de Podman monitoreado por Uptime Kuma              |
 | raspberry/utils           | `STATUS_PORT`, `ALLOWED_ORIGIN`                                                                                                            | Sí        | Puerto host y origen CORS permitido de homelab-status-api          |
+| raspberry/utils           | `HEIMDALL_HUB`, `HEIMDALL_TOKEN`                                                                                                           | Sí        | URL y token del hub Heimdall que turmo usa para la pantalla USB    |
 | raspberry/deploy-check    | `GITHUB_REPO`, `GITHUB_BRANCH`, `SUBDIR`, `TARGET_DIR`                                                                                     | Sí        | Repo/branch/subdir chequeados para la landing y destino local      |
 | s9+/proot-distro          | `TZ`                                                                                                                                       | No        | Timezone dentro del rootfs Debian de proot-distro                  |
 | s9+/proot-distro          | `NTFY_BASE_URL`, `NTFY_LISTEN_HTTP`, `NTFY_CACHE_FILE`, `NTFY_AUTH_FILE`, `NTFY_AUTH_DEFAULT_ACCESS`                                       | Sí        | Bind, cache y paths de auth del server ntfy                        |
@@ -210,7 +212,7 @@ raspberry/
 ├── pods/
 │   ├── gateway/            # Pi-hole, Caddy, Unbound
 │   │   └── caddy/          # Caddyfile, caddy.env.example
-│   └── utils/              # Uptime Kuma
+│   └── utils/              # Uptime Kuma, API de estado, turmo
 └── deploy-check/
     └── docs/               # Chequea repo del portfolio, sincroniza estáticos de la landing
 
