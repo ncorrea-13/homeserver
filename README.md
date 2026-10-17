@@ -54,7 +54,7 @@ Copy each pod's `.env.example` and fill in real values (see [Environment variabl
 
 ```bash
 # thinkcentre
-for pod in core immich entertainment storage utils; do
+for pod in core immich entertainment storage rolboard utils; do
   cp thinkcentre/pods/$pod/.env.example thinkcentre/pods/$pod/.env
 done
 
@@ -84,7 +84,7 @@ Or, once the `podman-compose@.service` template is set up, run each pod as a sys
 
 ```bash
 # on thinkcentre
-for pod in core immich entertainment storage utils; do
+for pod in core immich entertainment storage rolboard utils; do
   systemctl --user enable --now podman-compose@$pod
 done
 
@@ -136,8 +136,10 @@ Finally, back in Termux, copy `s9+/.termux/boot/start-all.sh` into `~/.termux/bo
 | thinkcentre/entertainment | `MINIFLUX_PORT`, `MINIFLUX_ADMIN_USER`                                                                                                     | Yes      | Miniflux port and admin login                                         |
 | thinkcentre/entertainment | `MINIFLUX_DB_USER`, `MINIFLUX_DB_NAME`                                                                                                     | Yes      | Miniflux PostgreSQL user/database name                                |
 | thinkcentre/entertainment | `KAVITA_PORT`, `KAVITA_CALIBRE_PATH`, `KAVITA_COMIC_PATH`, `KAVITA_MANGA_PATH`                                                             | Yes      | Kavita port and library host paths                                    |
+| thinkcentre/entertainment | `TS_DOMAIN`                                                                                                                                | Yes      | Tailscale domain used for service URLs                                |
 | thinkcentre/storage       | `SYNCTHING_UI_PORT`, `SYNCTHING_DATA_PATH`                                                                                                 | Yes      | Syncthing web UI port and data path                                   |
-| thinkcentre/storage       | `FILEBROWSER_PORT`, `FILEBROWSER_ROOT`                                                                                                     | Yes      | Filebrowser port and served root path                                 |
+| thinkcentre/storage       | `SFTPGO_PORT`, `SFTPGO_ROOT`                                                                                                     | Yes      | SFTPGo port and served root path                                 |
+| thinkcentre/rolboard      | `CLIENT_PORT`, `DATA_PATH`, `DB_PATH`, `VAULTS_ROOT_HOST`                                                                                  | Yes      | Rolboard client port, data and DB paths, read-only vaults root        |
 | thinkcentre/utils         | `TS_DOMAIN`                                                                                                                                | Yes      | Tailscale domain used for service URLs                                |
 | thinkcentre/utils         | `HOMEPAGE_PORT`, `HOMEPAGE_DOMAIN`, `HOMEPAGE_ALLOWED_HOSTS`                                                                               | Yes      | Homepage dashboard port/domain/allowed hosts                          |
 | thinkcentre/utils         | `HOMEPAGE_VAR_OPENWEATHER_KEY`                                                                                                             | No       | OpenWeather API key for the weather widget                            |
@@ -148,7 +150,7 @@ Finally, back in Termux, copy `s9+/.termux/boot/start-all.sh` into `~/.termux/bo
 | raspberry/gateway         | `LANDING`                                                                                                                                  | Yes      | Caddy landing page target                                             |
 | raspberry/gateway/caddy   | `ACME_EMAIL`                                                                                                                               | Yes      | Let's Encrypt email                                                   |
 | raspberry/gateway/caddy   | `TS_DOMAIN`, `BIND_IP`, `S9_IP`, `TC_IP`                                                                                                   | Yes      | Tailscale domain and machine IPs used in routing                      |
-| raspberry/gateway/caddy   | `PORT_*` (HOME, IMMICH, WEBHOOK, NTFY, UPTIME, FILEBROWSER, SUWAYOMI, KAVITA, RADICALE, MINIFLUX, SYNCTHING, PIHOLE, COCKPIT, VAULTWARDEN) | Yes      | Upstream ports Caddy reverse-proxies to                               |
+| raspberry/gateway/caddy   | `PORT_*` (HOME, IMMICH, WEBHOOK, NTFY, UPTIME, SFTPGO, SUWAYOMI, KAVITA, RADICALE, MINIFLUX, SYNCTHING, PIHOLE, COCKPIT, VAULTWARDEN) | Yes      | Upstream ports Caddy reverse-proxies to                               |
 | raspberry/utils           | `UPTIME_KUMA_PORT`                                                                                                                         | Yes      | Uptime Kuma web UI port                                               |
 | raspberry/utils           | `PODMAN_SOCKET`                                                                                                                            | No       | Podman socket path monitored by Uptime Kuma                           |
 | raspberry/utils           | `STATUS_PORT`, `ALLOWED_ORIGIN`                                                                                                            | Yes      | homelab-status-api host port and allowed CORS origin                  |
@@ -176,6 +178,7 @@ echo "value" | podman secret create <name> -
 | `miniflux_admin_password`    | thinkcentre/entertainment  | Miniflux admin login password           |
 | `miniflux_db_url`            | thinkcentre/entertainment  | Miniflux PostgreSQL connection URL      |
 | `immich_db_password`         | thinkcentre/immich         | Immich PostgreSQL password              |
+| `rolboard_admin_token`       | thinkcentre/rolboard       | Rolboard admin token                    |
 
 ## Architecture
 

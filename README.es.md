@@ -34,7 +34,7 @@ Los primeros tres tienen su propia carpeta en este repo, con sus pods y variable
 | Fotos / video         | Immich, PostgreSQL, Redis                             |
 | Gestor de contraseñas | Vaultwarden                                           |
 | CalDAV/CardDAV        | Radicale                                              |
-| Archivos              | Syncthing, SFTPGo, Samba                              |
+| Archivos              | Syncthing, SFTPGo                              |
 | Lecturas varias       | Miniflux + PostgreSQL, Suwayomi, Kavita, FlareSolverr |
 | Panel de inicio       | Homepage                                              |
 | Proyectos propios     | Rolboard (servidor Go + cliente React)                |
@@ -55,7 +55,7 @@ Copiá el `.env.example` de cada pod y completá los valores reales (ver [Variab
 
 ```bash
 # thinkcentre
-for pod in core immich entertainment storage utils; do
+for pod in core immich entertainment storage rolboard utils; do
   cp thinkcentre/pods/$pod/.env.example thinkcentre/pods/$pod/.env
 done
 
@@ -85,7 +85,7 @@ O, con el template `podman-compose@.service` ya configurado, corré cada pod com
 
 ```bash
 # en thinkcentre
-for pod in core immich entertainment storage utils; do
+for pod in core immich entertainment storage rolboard utils; do
   systemctl --user enable --now podman-compose@$pod
 done
 
@@ -137,8 +137,10 @@ Por último, de vuelta en Termux, copiá `s9+/.termux/boot/start-all.sh` a `~/.t
 | thinkcentre/entertainment | `MINIFLUX_PORT`, `MINIFLUX_ADMIN_USER`                                                                                                     | Sí        | Puerto y login admin de Miniflux                                   |
 | thinkcentre/entertainment | `MINIFLUX_DB_USER`, `MINIFLUX_DB_NAME`                                                                                                     | Sí        | Usuario y nombre de base PostgreSQL de Miniflux                    |
 | thinkcentre/entertainment | `KAVITA_PORT`, `KAVITA_CALIBRE_PATH`, `KAVITA_COMIC_PATH`, `KAVITA_MANGA_PATH`                                                             | Sí        | Puerto y paths de bibliotecas de Kavita                            |
+| thinkcentre/entertainment | `TS_DOMAIN`                                                                                                                                | Sí        | Dominio de Tailscale usado en las URLs de servicios                |
 | thinkcentre/storage       | `SYNCTHING_UI_PORT`, `SYNCTHING_DATA_PATH`                                                                                                 | Sí        | Puerto de UI y path de datos de Syncthing                          |
-| thinkcentre/storage       | `FILEBROWSER_PORT`, `FILEBROWSER_ROOT`                                                                                                     | Sí        | Puerto y root servido por Filebrowser                              |
+| thinkcentre/storage       | `SFTPGO_PORT`, `SFTPGO_ROOT`                                                                                                     | Sí        | Puerto y root servido por SFTPGo                              |
+| thinkcentre/rolboard      | `CLIENT_PORT`, `DATA_PATH`, `DB_PATH`, `VAULTS_ROOT_HOST`                                                                                  | Sí        | Puerto del cliente, paths de datos y DB, root de vaults (solo lectura) de Rolboard |
 | thinkcentre/utils         | `TS_DOMAIN`                                                                                                                                | Sí        | Dominio de Tailscale usado en las URLs de servicios                |
 | thinkcentre/utils         | `HOMEPAGE_PORT`, `HOMEPAGE_DOMAIN`, `HOMEPAGE_ALLOWED_HOSTS`                                                                               | Sí        | Puerto/dominio/hosts permitidos del dashboard Homepage             |
 | thinkcentre/utils         | `HOMEPAGE_VAR_OPENWEATHER_KEY`                                                                                                             | No        | API key de OpenWeather para el widget del clima                    |
@@ -149,7 +151,7 @@ Por último, de vuelta en Termux, copiá `s9+/.termux/boot/start-all.sh` a `~/.t
 | raspberry/gateway         | `LANDING`                                                                                                                                  | Sí        | Target de la landing page en Caddy                                 |
 | raspberry/gateway/caddy   | `ACME_EMAIL`                                                                                                                               | Sí        | Email de Let's Encrypt                                             |
 | raspberry/gateway/caddy   | `TS_DOMAIN`, `BIND_IP`, `S9_IP`, `TC_IP`                                                                                                   | Sí        | Dominio de Tailscale e IPs de máquinas para el ruteo               |
-| raspberry/gateway/caddy   | `PORT_*` (HOME, IMMICH, WEBHOOK, NTFY, UPTIME, FILEBROWSER, SUWAYOMI, KAVITA, RADICALE, MINIFLUX, SYNCTHING, PIHOLE, COCKPIT, VAULTWARDEN) | Sí        | Puertos upstream a los que Caddy hace proxy inverso                |
+| raspberry/gateway/caddy   | `PORT_*` (HOME, IMMICH, WEBHOOK, NTFY, UPTIME, SFTPGO, SUWAYOMI, KAVITA, RADICALE, MINIFLUX, SYNCTHING, PIHOLE, COCKPIT, VAULTWARDEN) | Sí        | Puertos upstream a los que Caddy hace proxy inverso                |
 | raspberry/utils           | `UPTIME_KUMA_PORT`                                                                                                                         | Sí        | Puerto de UI web de Uptime Kuma                                    |
 | raspberry/utils           | `PODMAN_SOCKET`                                                                                                                            | No        | Path del socket de Podman monitoreado por Uptime Kuma              |
 | raspberry/utils           | `STATUS_PORT`, `ALLOWED_ORIGIN`                                                                                                            | Sí        | Puerto host y origen CORS permitido de homelab-status-api          |
@@ -177,6 +179,7 @@ echo "valor" | podman secret create <nombre> -
 | `miniflux_admin_password`     | thinkcentre/entertainment  | Contraseña de login admin de Miniflux   |
 | `miniflux_db_url`             | thinkcentre/entertainment  | URL de conexión PostgreSQL de Miniflux  |
 | `immich_db_password`          | thinkcentre/immich         | Contraseña PostgreSQL de Immich         |
+| `rolboard_admin_token`        | thinkcentre/rolboard       | Token admin de Rolboard                 |
 
 ## Arquitectura
 
