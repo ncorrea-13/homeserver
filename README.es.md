@@ -182,6 +182,15 @@ echo "valor" | podman secret create <nombre> -
 
 Cada pod se mapea como contenedores separados, en donde se orquestan Pods para compartir infraestructura entre ellos y así organizarlos a nivel de ficheros como de capacidades. Reiniciar o actualizar uno no afecta a los demás.
 
+## Red y seguridad
+
+- **Acceso único:** los servicios se alcanzan solo por la tailnet, a través de Caddy en la Raspberry Pi. Todos los puertos de servicios están cerrados a la LAN.
+- **DNS:** Pi-hole filtra las consultas y las reenvía a Unbound, que resuelve hacia afuera con Mullvad exclusivamente por DoT.
+- **TLS:** Caddy emite certificados por ACME con un token DNS de Cloudflare guardado como secret de Podman.
+- **Exposición pública:** la landing sale por un Cloudflare Tunnel. Cualquier otra cosa se abre puntualmente con Tailscale Funnel.
+- **Rootless:** cada pod corre sin root como servicio de systemd de usuario, y las credenciales viven en secrets de Podman, nunca en `.env`.
+- **El observador del observador:** el teléfono corre ntfy, recibe todas las alertas y chequea cada 5 minutos que el gateway de la Raspberry Pi esté vivo.
+
 ## Backups
 
 Unicamente el servidor de datos posee backups periódicos ya que es el que posee información más relevante y en mayor cantidad. Se ejecuta thinkcentre/scripts/backup.sh por cron, recibiendo el directorio destino como único argumento:

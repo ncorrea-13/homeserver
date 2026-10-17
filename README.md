@@ -181,6 +181,15 @@ echo "value" | podman secret create <name> -
 
 Each pod maps to separate containers, orchestrated as Pods to share infrastructure between them, organizing them both at the file level and by capability. Restarting or updating one does not affect the others.
 
+## Network and security
+
+- **Single entry point:** services are reached only over the tailnet, through Caddy on the Raspberry Pi. All service ports are closed to the LAN.
+- **DNS:** Pi-hole filters queries and forwards them to Unbound, which resolves upstream through Mullvad exclusively over DoT.
+- **TLS:** Caddy issues certificates via ACME with a Cloudflare DNS token kept as a Podman secret.
+- **Public exposure:** the landing page goes out through a Cloudflare Tunnel. Anything else is opened case by case with Tailscale Funnel.
+- **Rootless:** every pod runs rootless under a systemd user service, and credentials live in Podman secrets, never in `.env`.
+- **Watching the watcher:** the phone runs ntfy, receives every alert, and checks every 5 minutes that the Raspberry Pi gateway is alive.
+
 ## Backups
 
 Only the data server has periodic backups, since it holds the most and the most relevant data. thinkcentre/scripts/backup.sh runs via cron, taking the destination directory as its only argument:
