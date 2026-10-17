@@ -1,6 +1,6 @@
 services:
   uptime-kuma:
-    image: docker.io/louislam/uptime-kuma:1.23.17
+    image: docker.io/louislam/uptime-kuma:latest
     container_name: uptime-kuma
     restart: always
     network_mode: host
@@ -44,6 +44,11 @@ services:
     environment:
       - HEIMDALL_HUB=${HEIMDALL_HUB}
       - HEIMDALL_TOKEN=${HEIMDALL_TOKEN}
+      - TURMO_FLEET_CACHE=/data/fleet.json
+    volumes:
+      - ./turmo/wallpaper.png:/wallpaper.png:ro
+      - ./turmo/data/:/data/
+    command: ["--fleet", "--port", "/dev/ttyACM0", "--width", "480", "--height", "320", "--orientation", "landscape", "--interval", "3", "--clear", "--fleet-bg", "/wallpaper.png"]
     logging:
       driver: journald
 
