@@ -192,7 +192,7 @@ Only the data server has periodic backups, since it holds the most and the most 
 
 The web version linked above isn't part of this repository. It's an extension of my [portfolio](https://github.com/ncorrea-13/portfolio/tree/main/servidor) and reaches the internet through a Cloudflare Tunnel.
 
-Its data comes from a status API at <https://status.ncorrea.com.ar>, a separate FastAPI project in this [repo](https://github.com/ncorrea-13/homelab-status) that stores Uptime Kuma's webhook notifications in SQLite and serves them back for the dashboard to read.
+Its data comes from a status API at <https://status.ncorrea.com.ar>, a separate Go project in this [repo](https://github.com/ncorrea-13/homelab-status) that stores Uptime Kuma's webhook notifications in SQLite and serves them back for the dashboard to read.
 
 `raspberry/deploy-check/docs` keeps the static files in sync. A systemd timer runs `deploy-check-docs.sh` every 5 minutes; it compares the portfolio repo's latest commit SHA against `.deployed-sha` in `TARGET_DIR` and, on change, re-downloads `index.html`, `style.css`, and the architecture diagrams straight from GitHub:
 
