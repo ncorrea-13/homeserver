@@ -2,7 +2,7 @@
 
 # My Personal Homelab
 
-**Self-hosted infra across three machines, managed as Podman Compose pods and systemd user services**
+**Self-hosted infra across four machines, managed as Podman Compose pods and systemd user services**
 
 </div>
 
@@ -20,8 +20,9 @@
 | Lenovo ThinkCentre M710q | Main services (photos, files, media) |
 | Raspberry Pi 4B          | Network gateway (DNS, reverse proxy) |
 | Samsung Galaxy S9+       | Push notifications relay             |
+| HP ProDesk               | VM lab (libvirt + KVM), isolated     |
 
-Each machine has its own folder in this repo, with its own pods and its own `.env` files.
+The first three each have their own folder in this repo, with their own pods and `.env` files. The ProDesk is a lab server for security and platform engineering practice: it is isolated from the production network, has no Internet access, and is not managed here.
 
 ## Stack
 
@@ -36,6 +37,7 @@ Each machine has its own folder in this repo, with its own pods and its own `.en
 | File sync / browser  | Syncthing, SFTPGo                                     |
 | RSS / manga / ebooks | Miniflux + PostgreSQL, Suwayomi, Kavita, FlareSolverr |
 | Dashboard            | Homepage                                              |
+| Own projects         | Rolboard (Go server + React client)                   |
 | Monitoring           | Uptime Kuma                                           |
 | USB screen           | [turmo-screen](https://github.com/ncorrea-13/turmo-screen) + Heimdall             |
 | Push notifications   | ntfy                                                  |
@@ -221,6 +223,7 @@ thinkcentre/
 │   ├── immich/             # Immich, Postgres, Redis
 │   ├── entertainment/      # Miniflux, Suwayomi, Kavita, FlareSolverr
 │   ├── storage/            # Syncthing, SFTPGo
+│   ├── rolboard/           # Rolboard server and client
 │   └── utils/              # Homepage
 └── scripts/
     └── backup.sh           # Backup job

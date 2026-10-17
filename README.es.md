@@ -2,7 +2,7 @@
 
 # Mi Homelab Personal
 
-**Infraestructura self-hosted basada en tres nodos, manejada por contenedores en pods de Podman y servicios de systemd a nivel usuario**
+**Infraestructura self-hosted basada en cuatro nodos, manejada por contenedores en pods de Podman y servicios de systemd a nivel usuario**
 
 </div>
 
@@ -20,8 +20,9 @@
 | Lenovo ThinkCentre M710q | Servicios principales (fotos, archivos, media) |
 | Raspberry Pi 4B          | Gateway de red (DNS, proxy inverso)            |
 | Samsung Galaxy S9+       | Relay de notificaciones push                   |
+| HP ProDesk               | Laboratorio de VMs (libvirt + KVM), aislado    |
 
-Cada dispositivo tiene su propia carpeta en este repo, con sus propios pods y sus propias variables de entorno.
+Los primeros tres tienen su propia carpeta en este repo, con sus pods y variables de entorno. El ProDesk es un servidor de laboratorio para practicar ciberseguridad e ingeniería de plataforma: está aislado de la red de producción, sin acceso a Internet, y no se gestiona acá.
 
 ## Stack
 
@@ -36,6 +37,7 @@ Cada dispositivo tiene su propia carpeta en este repo, con sus propios pods y su
 | Archivos              | Syncthing, SFTPGo, Samba                              |
 | Lecturas varias       | Miniflux + PostgreSQL, Suwayomi, Kavita, FlareSolverr |
 | Panel de inicio       | Homepage                                              |
+| Proyectos propios     | Rolboard (servidor Go + cliente React)                |
 | Panel de control      | Cockpit                                               |
 | Monitoreo             | Uptime Kuma                                           |
 | Pantalla USB          | [turmo-screen](https://github.com/ncorrea-13/turmo-screen) + Heimdall            |
@@ -222,6 +224,7 @@ thinkcentre/
 │   ├── immich/             # Immich, Postgres, Redis
 │   ├── entertainment/      # Miniflux, Suwayomi, Kavita, FlareSolverr
 │   ├── storage/            # Syncthing, SFTPGo
+│   ├── rolboard/           # Servidor y cliente de Rolboard
 │   └── utils/              # Homepage
 └── scripts/
     └── backup.sh           # Job de backup
