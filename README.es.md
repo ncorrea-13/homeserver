@@ -33,7 +33,7 @@ Cada dispositivo tiene su propia carpeta en este repo, con sus propios pods y su
 | Fotos / video         | Immich, PostgreSQL, Redis                             |
 | Gestor de contraseñas | Vaultwarden                                           |
 | CalDAV/CardDAV        | Radicale                                              |
-| Archivos              | Syncthing, Filebrowser, Samba                         |
+| Archivos              | Syncthing, SFTPGo, Samba                              |
 | Lecturas varias       | Miniflux + PostgreSQL, Suwayomi, Kavita, FlareSolverr |
 | Panel de inicio       | Homepage                                              |
 | Panel de control      | Cockpit                                               |
@@ -221,7 +221,7 @@ thinkcentre/
 │   ├── core/               # Vaultwarden, Radicale
 │   ├── immich/             # Immich, Postgres, Redis
 │   ├── entertainment/      # Miniflux, Suwayomi, Kavita, FlareSolverr
-│   ├── storage/            # Syncthing, Filebrowser
+│   ├── storage/            # Syncthing, SFTPGo
 │   └── utils/              # Homepage
 └── scripts/
     └── backup.sh           # Job de backup
