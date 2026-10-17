@@ -29,9 +29,9 @@
           description: Manga online sources
           target: _self
 - Storage funnel:
-    - Filebrowser:
-        - icon: filebrowser.png
-          href: https://webhook.{TS_DOMAIN}/hooks/funnel-filebrowser
+    - SFTPGo:
+        - icon: sftpgo.png
+          href: https://webhook.{TS_DOMAIN}/hooks/funnel-sftpgo
           description: File manager
           target: _self
     - Apagar Funnel:

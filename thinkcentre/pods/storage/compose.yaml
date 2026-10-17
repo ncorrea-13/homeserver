@@ -27,12 +27,12 @@ services:
     container_name: sftpgo
     restart: always
     ports:
-      - "${FILEBROWSER_PORT}:8080"
+      - "${SFTPGO_PORT}:8080"
     environment:
       - TZ=${TZ}
       - SFTPGO_COMMON__UMASK=002
     volumes:
-      - ${FILEBROWSER_ROOT}:/srv:rw
+      - ${SFTPGO_ROOT}:/srv:rw
       - ./sftpgo/data:/var/lib/sftpgo:Z
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]

@@ -51,9 +51,9 @@ uptime.{$TS_DOMAIN} {
     }
 }
 
-filebrowser.{$TS_DOMAIN} {
+sftpgo.{$TS_DOMAIN} {
     bind {$BIND_IP}
-    reverse_proxy {$TC_IP}:{$PORT_FILEBROWSER}
+    reverse_proxy {$TC_IP}:{$PORT_SFTPGO}
     tls {
         dns cloudflare {env.CF_API_TOKEN}
     }

@@ -20,9 +20,9 @@
         href: https://uptime.{TS_DOMAIN}
 
 - Almacenamiento:
-    - File Browser:
-        icon: filebrowser-quantum.png
-        href: https://filebrowser.{TS_DOMAIN}
+    - SFTPGo:
+        icon: sftpgo.png
+        href: https://sftpgo.{TS_DOMAIN}
 
     - Immich:
         icon: immich.png
