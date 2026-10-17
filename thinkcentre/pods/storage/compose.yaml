@@ -1,6 +1,6 @@
-services:
+services: 
   syncthing:
-    image: docker.io/linuxserver/syncthing:2.1.5
+    image: docker.io/linuxserver/syncthing:latest
     container_name: syncthing
     environment:
       - PUID=0
@@ -22,36 +22,22 @@ services:
     logging:
       driver: journald
 
-  filebrowser:
-    image: docker.io/filebrowser/filebrowser:v2.63.23
-    container_name: filebrowser
+  sftpgo:
+    image: docker.io/drakkan/sftpgo:latest
+    container_name: sftpgo
     restart: always
-    security_opt:
-      - label=disable
     ports:
       - "${FILEBROWSER_PORT}:8080"
-    group_add:
-      - keep-groups
     environment:
       - TZ=${TZ}
-    command:
-      [
-        "--database",
-        "/config/filebrowser.db",
-        "--root",
-        "/srv",
-        "--address",
-        "0.0.0.0",
-        "--port",
-        "8080",
-      ]
+      - SFTPGO_COMMON__UMASK=002
+    volumes:
+      - ${FILEBROWSER_ROOT}:/srv:rw
+      - ./sftpgo/data:/var/lib/sftpgo:Z
     healthcheck:
-      test: ["CMD-SHELL", "filebrowser version"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
       interval: 30s
       timeout: 5s
       retries: 3
-    volumes:
-      - ${FILEBROWSER_ROOT}:/srv:rw
-      - ./filebrowser:/config:rw
     logging:
       driver: journald
