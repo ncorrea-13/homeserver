@@ -45,8 +45,8 @@ Cada dispositivo tiene su propia carpeta en este repo, con sus propios pods y su
 ## Instalación rápida
 
 ```bash
-git clone https://github.com/ncorrea-13/homelab
-cd homelab
+git clone https://github.com/ncorrea-13/homeserver
+cd homeserver
 ```
 
 Copiá el `.env.example` de cada pod y completá los valores reales (ver [Variables de entorno](#variables-de-entorno)):

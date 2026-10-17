@@ -44,8 +44,8 @@ Each machine has its own folder in this repo, with its own pods and its own `.en
 ## Quick Start
 
 ```bash
-git clone https://github.com/ncorrea-13/homelab
-cd homelab
+git clone https://github.com/ncorrea-13/homeserver
+cd homeserver
 ```
 
 Copy each pod's `.env.example` and fill in real values (see [Environment variables](#environment-variables)):
