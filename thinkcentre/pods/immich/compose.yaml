@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/immich_db_password
       POSTGRES_USER: ${IMMICH_DB_USER}
       POSTGRES_DB: ${IMMICH_DB_NAME}
-      POSTGRES_INITDB_ARGS: "--data-checksums"
+      POSTGRES_INITDB_ARGS: '--data-checksums'
     secrets:
       - immich_db_password
     volumes:

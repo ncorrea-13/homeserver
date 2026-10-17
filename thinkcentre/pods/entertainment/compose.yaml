@@ -1,11 +1,12 @@
 name: entertainment
 
+
 networks:
   suwayomi-net:
     driver: bridge
 services:
   suwayomi:
-    image: ghcr.io/suwayomi/suwayomi-server:stable@sha256:e59f212ccf91b26de8676a063a2db90256c148c6261535c7c477d47a43d9751b
+    image: ghcr.io/suwayomi/suwayomi-server:latest
     container_name: tachidesk
     restart: unless-stopped
     ports:
@@ -25,7 +26,7 @@ services:
     logging:
       driver: journald
   flaresolverr:
-    image: ghcr.io/flaresolverr/flaresolverr:v3.5.2
+    image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
     restart: unless-stopped
     ports:
@@ -41,7 +42,7 @@ services:
     logging:
       driver: journald
   miniflux:
-    image: docker.io/miniflux/miniflux:2.3.3
+    image: docker.io/miniflux/miniflux:latest
     container_name: miniflux
     ports:
       - "${MINIFLUX_PORT}:8080"
@@ -59,7 +60,7 @@ services:
     logging:
       driver: journald
   db:
-    image: docker.io/library/postgres:15.19-alpine
+    image: docker.io/library/postgres:15-alpine
     container_name: miniflux_db
     environment:
       - POSTGRES_USER=${MINIFLUX_DB_USER}
@@ -73,7 +74,7 @@ services:
     logging:
       driver: journald
   kavita:
-    image: docker.io/jvmilazz0/kavita:0.9.1
+    image: docker.io/jvmilazz0/kavita:latest
     container_name: kavita
     restart: unless-stopped
     environment:

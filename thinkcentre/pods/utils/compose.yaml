@@ -1,6 +1,6 @@
 services:
   homepage:
-    image: docker.io/gethomepage/homepage:v2.4.0
+    image: docker.io/gethomepage/homepage:latest
     container_name: homepage
     restart: unless-stopped
     ports:
