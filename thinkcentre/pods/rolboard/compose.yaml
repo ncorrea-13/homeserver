@@ -6,7 +6,7 @@ services:
   server:
     container_name: rolboard-server
     image: ghcr.io/ncorrea-13/rolboard-server:latest
-    user: "${ROLBOARD_USER:1000}"
+    user: "${ROLBOARD_USER}:1000"
     env_file:
       - .env
     secrets:
