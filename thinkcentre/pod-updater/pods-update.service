@@ -1,0 +1,6 @@
+[Unit]
+Description=Pull images and recreate compose pods
+
+[Service]
+Type=oneshot
+ExecStart=%h/homelab/thinkcentre/pod-updaterpods-update.sh
